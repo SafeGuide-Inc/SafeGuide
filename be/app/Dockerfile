@@ -1,6 +1,6 @@
 FROM denoland/deno:latest as base
 
-WORKDIR /be/app
+WORKDIR /app
 
 COPY . ./
 
