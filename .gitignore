@@ -5,3 +5,13 @@ node_modules
 data
 be/prisma-deno-deploy/generated
 be/prisma-deno-deploy/package-lock.json
+
+app/**/doc/api/
+app/**/ios/Flutter/.last_build_id
+app/.dart_tool/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+app/.packages
+app/.pub-cache/
+app/.pub/
+app/build/
