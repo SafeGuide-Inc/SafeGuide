@@ -23,3 +23,15 @@ enum Level {
   Warn
   Error
 }
+
+model user {
+  id           String @id @default(uuid())
+  first_name   String
+  last_name    String
+  email        String
+  phone_number String
+}
+
+model reports {
+  latitude     
+}
