@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' hide TextInput;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:lottie/lottie.dart';
@@ -24,13 +25,14 @@ class _LoginState extends State<Login> {
             leading: Container(
                 margin: EdgeInsets.only(left: 6.w),
                 child: InkWell(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () =>
+                      {Navigator.pop(context), HapticFeedback.lightImpact()},
                   child: Row(
                     children: [
                       const Icon(Icons.arrow_back_ios_new_rounded,
                           color: Colors.black, size: 20),
                       SizedBox(width: 1.w),
-                      Text('Back',
+                      Text('',
                           style: GoogleFonts.lato(
                               color: Colors.black,
                               fontSize: 18,
@@ -86,7 +88,7 @@ class _LoginContainerState extends State<LoginContainer> {
       child: Column(
         children: [
           SizedBox(
-            height: 5.h,
+            height: 2.h,
           ),
           Container(
               alignment: AlignmentDirectional.centerStart,
@@ -110,11 +112,17 @@ class _LoginContainerState extends State<LoginContainer> {
           SizedBox(
             height: 7.h,
           ),
-          const CodeInput(label: 'Verification code:'),
+          CodeInput(),
           const SizedBox(
             height: 30,
           ),
-          Button(isLoading: false, title: 'Continue', onPressed: () => {}),
+          Button(
+              isLoading: false,
+              title: 'Continue',
+              onPressed: () => {
+                    HapticFeedback.lightImpact(),
+                    Navigator.pushNamed(context, '/home')
+                  }),
           const SizedBox(height: 70),
           Text('Problems login in your account?',
               textAlign: TextAlign.left,

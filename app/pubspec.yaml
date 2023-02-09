@@ -41,6 +41,8 @@ dependencies:
   responsive_grid: ^2.1.0
   sizer: ^2.0.15
   lottie: ^1.4.3
+  google_maps_flutter: ^2.2.3
+  font_awesome_flutter: ^10.3.0
 
 dev_dependencies:
   flutter_test:

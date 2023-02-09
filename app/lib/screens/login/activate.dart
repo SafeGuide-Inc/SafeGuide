@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' hide TextInput;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:lottie/lottie.dart';
@@ -15,18 +16,32 @@ class Activation extends StatefulWidget {
 }
 
 class _ActivationState extends State<Activation> {
-  var initialPage = 1;
+  var step = 0;
+
+  changeStep(int newStep) {
+    setState(() {
+      step = newStep;
+    });
+  }
 
   renderer(page) {
     switch (page) {
       case 0:
-        return ActivationContainer();
+        return ActivationContainer(
+          stepFunction: changeStep,
+        );
       case 1:
-        return ValidateIdentity();
+        return ValidateIdentity(
+          stepFunction: changeStep,
+        );
       case 2:
-        return DeniedContainer();
+        return DeniedContainer(
+          stepFunction: changeStep,
+        );
       default:
-        return ActivationContainer();
+        return ActivationContainer(
+          stepFunction: changeStep,
+        );
     }
   }
 
@@ -39,13 +54,14 @@ class _ActivationState extends State<Activation> {
             leading: Container(
                 margin: EdgeInsets.only(left: 6.w),
                 child: InkWell(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () =>
+                      {HapticFeedback.lightImpact(), Navigator.pop(context)},
                   child: Row(
                     children: [
                       const Icon(Icons.arrow_back_ios_new_rounded,
                           color: Colors.black, size: 20),
                       SizedBox(width: 1.w),
-                      Text('Back',
+                      Text('',
                           style: GoogleFonts.lato(
                               color: Colors.black,
                               fontSize: 18,
@@ -54,7 +70,8 @@ class _ActivationState extends State<Activation> {
                   ),
                 ))),
         backgroundColor: const Color(0xffF5F5F5),
-        body: ResponsiveGridRow(children: [
+        body: SingleChildScrollView(
+            child: ResponsiveGridRow(children: [
           ResponsiveGridCol(
             xs: 12,
             sm: 12,
@@ -62,7 +79,7 @@ class _ActivationState extends State<Activation> {
             child: LimitedBox(
                 maxHeight: double.infinity,
                 maxWidth: double.infinity,
-                child: renderer(2)),
+                child: renderer(step)),
           ),
           ResponsiveGridCol(
               xs: 0,
@@ -81,18 +98,31 @@ class _ActivationState extends State<Activation> {
                       ),
                     )),
               ))
-        ]));
+        ])));
   }
 }
 
 class ActivationContainer extends StatefulWidget {
-  const ActivationContainer({super.key});
+  ActivationContainer({super.key, this.stepFunction});
+
+  var stepFunction;
 
   @override
   State<ActivationContainer> createState() => _ActivationContainerState();
 }
 
 class _ActivationContainerState extends State<ActivationContainer> {
+  TextEditingController _emailController = TextEditingController();
+
+  validateEmail() {
+    print(_emailController.text);
+    if (_emailController.text.contains('.edu')) {
+      widget.stepFunction(1);
+    } else {
+      widget.stepFunction(2);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -101,7 +131,7 @@ class _ActivationContainerState extends State<ActivationContainer> {
       child: Column(
         children: [
           SizedBox(
-            height: 8.h,
+            height: 2.h,
           ),
           Container(
               alignment: AlignmentDirectional.centerStart,
@@ -125,11 +155,14 @@ class _ActivationContainerState extends State<ActivationContainer> {
           SizedBox(
             height: 7.h,
           ),
-          const TextInput(label: 'Email'),
+          TextInput(label: 'Email', controller: _emailController),
           const SizedBox(
             height: 10,
           ),
-          Button(isLoading: false, title: 'Continue', onPressed: () => {}),
+          Button(
+              isLoading: false,
+              title: 'Continue',
+              onPressed: () => {HapticFeedback.lightImpact(), validateEmail()}),
         ],
       ),
     );
@@ -137,7 +170,9 @@ class _ActivationContainerState extends State<ActivationContainer> {
 }
 
 class DeniedContainer extends StatefulWidget {
-  const DeniedContainer({super.key});
+  DeniedContainer({super.key, this.stepFunction});
+
+  var stepFunction;
 
   @override
   State<DeniedContainer> createState() => _DeniedContainerState();
@@ -152,7 +187,7 @@ class _DeniedContainerState extends State<DeniedContainer> {
       child: Column(
         children: [
           SizedBox(
-            height: 8.h,
+            height: 2.h,
           ),
           Container(
               alignment: AlignmentDirectional.centerStart,
@@ -179,7 +214,8 @@ class _DeniedContainerState extends State<DeniedContainer> {
           Button(
               isLoading: false,
               title: 'Back',
-              onPressed: () => Navigator.pop(context)),
+              onPressed: () =>
+                  {HapticFeedback.lightImpact(), Navigator.pop(context)}),
           const SizedBox(height: 45),
           Text('Problems validating your email?',
               textAlign: TextAlign.left,
@@ -207,13 +243,28 @@ class _DeniedContainerState extends State<DeniedContainer> {
 }
 
 class ValidateIdentity extends StatefulWidget {
-  const ValidateIdentity({super.key});
+  ValidateIdentity({super.key, this.stepFunction});
 
+  var stepFunction;
   @override
   State<ValidateIdentity> createState() => _ValidateIdentityState();
 }
 
 class _ValidateIdentityState extends State<ValidateIdentity> {
+  FocusNode _firstDigitFocus = FocusNode();
+  FocusNode _secondDigitFocus = FocusNode();
+  FocusNode _thirdDigitFocus = FocusNode();
+  FocusNode _fourthDigitFocus = FocusNode();
+  FocusNode _fifthDigitFocus = FocusNode();
+  FocusNode _sixthDigitFocus = FocusNode();
+
+  TextEditingController _firstDigitController = TextEditingController();
+  TextEditingController _secondDigitController = TextEditingController();
+  TextEditingController _thirdDigitController = TextEditingController();
+  TextEditingController _fourthDigitController = TextEditingController();
+  TextEditingController _fifthDigitController = TextEditingController();
+  TextEditingController _sixthDigitController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -222,7 +273,7 @@ class _ValidateIdentityState extends State<ValidateIdentity> {
       child: Column(
         children: [
           SizedBox(
-            height: 8.h,
+            height: 2.h,
           ),
           Container(
               alignment: AlignmentDirectional.centerStart,
@@ -246,7 +297,7 @@ class _ValidateIdentityState extends State<ValidateIdentity> {
           SizedBox(
             height: 7.h,
           ),
-          const CodeInput(label: 'Verification code:'),
+          CodeInput(),
           const SizedBox(
             height: 30,
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' hide TextInput;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:lottie/lottie.dart';
@@ -19,8 +20,9 @@ class _LoginHomeState extends State<LoginHome> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: const Color(0xffF5F5F5),
-        body: SafeArea(
-            child: ResponsiveGridRow(children: [
+        body: SingleChildScrollView(
+            child: SafeArea(
+                child: ResponsiveGridRow(children: [
           ResponsiveGridCol(
             xs: 12,
             sm: 12,
@@ -47,7 +49,7 @@ class _LoginHomeState extends State<LoginHome> {
                       ),
                     )),
               ))
-        ])));
+        ]))));
   }
 }
 
@@ -98,7 +100,10 @@ class _LoginContainerState extends State<LoginContainer> {
           Button(
               isLoading: false,
               title: 'Login',
-              onPressed: (() => Navigator.pushNamed(context, '/login'))),
+              onPressed: (() => {
+                    HapticFeedback.lightImpact(),
+                    Navigator.pushNamed(context, '/login')
+                  })),
           const Spacer(),
           Text('Don’t you have an account?',
               textAlign: TextAlign.left,
@@ -109,6 +114,7 @@ class _LoginContainerState extends State<LoginContainer> {
           const SizedBox(height: 10),
           InkWell(
             onTap: () {
+              HapticFeedback.lightImpact();
               Navigator.pushNamed(context, '/activation');
             },
             child: SizedBox(
