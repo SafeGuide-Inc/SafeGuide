@@ -1,5 +1,5 @@
 import { makeExecutableSchema } from "https://deno.land/x/graphql_tools@0.0.2/mod.ts";
-import { PrismaClient } from './prisma-deno-deploy/generated/client/deno/edge.ts'
+import { PrismaClient } from '../../prisma-deno-deploy/generated/client/deno/edge.ts'
 
 const prisma = new PrismaClient()
 
