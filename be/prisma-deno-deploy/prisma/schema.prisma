@@ -1,5 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["deno"]
@@ -24,14 +22,80 @@ enum Level {
   Error
 }
 
-model user {
-  id           String @id @default(uuid())
-  first_name   String
-  last_name    String
-  email        String
-  phone_number String
+enum Status {
+  Expired
+  Active
+  Invited
 }
 
-model reports {
-  latitude     
+model user {
+  id             String         @id @default(uuid())
+  firstName      String         @map("first_name")
+  lastName       String         @map("last_name")
+  email          String         @map("user_id")
+  phoneNumber    String         @map("phone_number")
+  deviceToken    String         @map("device_token")
+  organizationId String         @map("organization_id")
+  status         Status
+  created_at     DateTime       @default(now())
+  updated_at     DateTime
+  devices        devices[]
+  userSettings   userSettings[]
+  incidence      incidence[]
+  userReports    userReports[]
+}
+
+model devices {
+  id          String @id @default(uuid())
+  userId      String
+  user        user   @relation(fields: [userId], references: [id])
+  deviceToken String
+  os          String
+}
+
+model userSettings {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+  user   user   @relation(fields: [userId], references: [id])
+}
+
+model organization {
+  id          String @id @default(uuid())
+  name        String
+  lat         Float
+  long        Float
+  city        String
+  state       String
+  country     String
+  zipcode     Int
+  status      Status
+  emailDomain String @map("email_domain") // @uoregon.edu
+}
+
+model incidence {
+  id              String        @id @default(uuid())
+  lat             String
+  long            String
+  userId          String
+  user            user          @relation(fields: [userId], references: [id])
+  incidenceTypeId String        @map("incidence_type_id")
+  incidenceType   incidenceType @relation(fields: [incidenceTypeId], references: [id])
+  date            DateTime
+}
+
+model incidenceType {
+  id          String      @id @default(uuid())
+  name        String
+  description String
+  incidence   incidence[]
+}
+
+model userReports {
+  id              String @id @default(uuid())
+  reportingUserId String
+  user            user   @relation(fields: [reportingUserId], references: [id])
+  incidenceId     String
+
+  date   DateTime
+  reason String
 }
