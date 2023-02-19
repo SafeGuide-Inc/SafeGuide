@@ -1,0 +1,29 @@
+{
+  "name": "Pasta",
+  "version": "1.0.0",
+  "description": "Safeguide",
+  "main": "index.ts",
+  "repository": "https://github.com/SafeGuide-Inc/Pasta",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@apollo/server": "^4.4.0",
+    "@types/node": "^18.14.0",
+    "graphql": "^16.6.0",
+    "graphql-tools": "^8.3.18",
+    "prisma": "^4.10.1"
+  },
+  "scripts": {
+    "local-dev": "docker-compose up",
+    "start": "ts-node --esm ./app/index.ts",
+    "compile": "graphql-codegen",
+    "watch": "graphql-codegen -w"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^3.0.0",
+    "@graphql-codegen/client-preset": "^2.0.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
+  }
+}

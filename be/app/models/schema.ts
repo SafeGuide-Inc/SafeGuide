@@ -1,17 +1,27 @@
-import { makeExecutableSchema } from "https://deno.land/x/graphql_tools@0.0.2/mod.ts";
-import { gql } from "https://deno.land/x/graphql_tag@0.0.1/mod.ts";
+import { makeExecutableSchema } from 'graphql-tools';
 
-const typeDefs = gql`
+const typeDefs = `#graphql
+  # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
+
+  # This "Book" type defines the queryable fields for every book in our data source.
+  type Book {
+    title: String
+    author: String
+  }
+
+  # The "Query" type is special: it lists all of the available queries that
+  # clients can execute, along with the return type for each. In this
+  # case, the "books" query returns an array of zero or more Books (defined above).
   type Query {
-    hello: String
-  } 
+    books: [Book]
+  }
 `;
+
+
 const resolvers = {
   Query: {
-    hello: (_root: undefined, _args: unknown, ctx: { request: Request }) => {
-      return `Hello asdsaWorld! from ${ctx.request.url}`;
-    },
+    hello: () => 'Hello world!'
   },
 };
 
-export const schema = makeExecutableSchema({ resolvers, typeDefs });
+export const schema = makeExecutableSchema({ typeDefs, resolvers });

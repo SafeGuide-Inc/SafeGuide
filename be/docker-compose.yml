@@ -1,36 +1,27 @@
-version: "3.9"
-volumes:
-  app-data:
-    driver: local
-
+version: '3'
 
 services:
     db:
-        image: postgres
-        restart: always
-        environment:
-          POSTGRES_USER: safeguideuser
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: safeguide
-        volumes:
-            - ./data:/var/lib/postgresql/data
-        ports:
-            - "5432:5432"
-        expose:
+      image: postgres
+      restart: always
+      environment:
+        POSTGRES_USER: safeguideuser
+        POSTGRES_PASSWORD: password
+        POSTGRES_DB: safeguide
+      volumes:
+          - ./data:/var/lib/postgresql/data
+      ports:
+          - "5432:5432"
+      expose:
             - "5432"
-    deno:
-        container_name: deno
-        image: deno
-        restart: always
-        volumes:
-            - app-data:/app    
-        depends_on:
-            - db
-        build:
-            context: app
-            dockerfile: Dockerfile
-            target: base
-        ports:
-            - "${PORT}:${PORT}"
-
-        
+    app:
+      build: .
+      restart: always
+      ports:
+        - '4000:4000'
+      environment:
+        DATABASE_URL: postgresql://prisma:prisma@db:5432/prisma
+      depends_on:
+        - db
+volumes:
+  db:

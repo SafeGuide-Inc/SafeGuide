@@ -1,25 +1,34 @@
-/*
-  Warnings:
+-- CreateEnum
+CREATE TYPE "Level" AS ENUM ('Info', 'Warn', 'Error');
 
-  - You are about to drop the column `email` on the `user` table. All the data in the column will be lost.
-  - Added the required column `device_token` to the `user` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `organization_id` to the `user` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `status` to the `user` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `updated_at` to the `user` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `user_id` to the `user` table without a default value. This is not possible if the table is not empty.
-
-*/
 -- CreateEnum
 CREATE TYPE "Status" AS ENUM ('Expired', 'Active', 'Invited');
 
--- AlterTable
-ALTER TABLE "user" DROP COLUMN "email",
-ADD COLUMN     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN     "device_token" TEXT NOT NULL,
-ADD COLUMN     "organization_id" TEXT NOT NULL,
-ADD COLUMN     "status" "Status" NOT NULL,
-ADD COLUMN     "updated_at" TIMESTAMP(3) NOT NULL,
-ADD COLUMN     "user_id" TEXT NOT NULL;
+-- CreateTable
+CREATE TABLE "Log" (
+    "id" SERIAL NOT NULL,
+    "level" "Level" NOT NULL,
+    "message" TEXT NOT NULL,
+    "meta" JSONB NOT NULL,
+
+    CONSTRAINT "Log_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "user" (
+    "id" TEXT NOT NULL,
+    "first_name" TEXT NOT NULL,
+    "last_name" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "phone_number" TEXT NOT NULL,
+    "device_token" TEXT NOT NULL,
+    "organization_id" TEXT NOT NULL,
+    "status" "Status" NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "user_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "devices" (

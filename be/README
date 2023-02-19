@@ -1,8 +1,0 @@
-#PRISMA
-
-https://www.prisma.io/docs/guides/deployment/deployment-guides/deploying-to-deno-deploy
-
-1. cd be/prisma-deno-deploy
-2. deno run -A --unstable npm:prisma db push
-3. deno run -A --unstable npm:prisma generate --data-proxy
-
