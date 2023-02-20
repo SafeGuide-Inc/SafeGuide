@@ -22,7 +22,7 @@ services:
       ports:
         - '4000:4000'
       environment:
-        DATABASE_URL: postgresql://prisma:prisma@db:5432/prisma
+        DATABASE_URL: ${DATABASE_URL}
       depends_on:
         - db
 volumes:
