@@ -1,38 +1,11 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import * as userSchema from './users/users.js'
 
-const typeDefs = `#graphql
-  # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
-
-  # This "Book" type defines the queryable fields for every book in our data source.
-  type Book {
-    title: String
-    author: String
+export const schema = makeExecutableSchema({
+  typeDefs: [
+      userSchema.typeDefs, // First defines the type Query
+  ],
+  resolvers: {
+      ...userSchema.resolvers,
   }
-
-  # The "Query" type is special: it lists all of the available queries that
-  # clients can execute, along with the return type for each. In this
-  # case, the "books" query returns an array of zero or more Books (defined above).
-  type Query {
-    books: [Book]
-  }
-`;
-
-const books = [
-  {
-    title: 'blah',
-    author: 'Kate Chopin',
-  },
-  {
-    title: 'City of Glass',
-    author: 'Paul Auster',
-  },
-];
-
-
-const resolvers = {
-  Query: {
-    books: () => books,
-  },
-};
-
-export const schema = makeExecutableSchema({ typeDefs, resolvers });
+})

@@ -1,3 +1,7 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -28,11 +32,10 @@ model user {
   lastName       String         @map("last_name")
   email          String         @map("user_id")
   phoneNumber    String         @map("phone_number")
-  deviceToken    String         @map("device_token")
   organizationId String         @map("organization_id")
   status         Status
-  created_at     DateTime       @default(now())
-  updated_at     DateTime
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime
   devices        devices[]
   userSettings   userSettings[]
   incidence      incidence[]
