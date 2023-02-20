@@ -16,6 +16,8 @@ services:
             - "5432"
     app:
       build: .
+      volumes:
+        - ./app:/app
       restart: always
       ports:
         - '4000:4000'

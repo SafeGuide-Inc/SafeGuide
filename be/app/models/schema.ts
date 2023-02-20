@@ -1,4 +1,4 @@
-import { makeExecutableSchema } from 'graphql-tools';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const typeDefs = `#graphql
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
@@ -17,10 +17,21 @@ const typeDefs = `#graphql
   }
 `;
 
+const books = [
+  {
+    title: 'blah',
+    author: 'Kate Chopin',
+  },
+  {
+    title: 'City of Glass',
+    author: 'Paul Auster',
+  },
+];
+
 
 const resolvers = {
   Query: {
-    hello: () => 'Hello world!'
+    books: () => books,
   },
 };
 

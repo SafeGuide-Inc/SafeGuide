@@ -12,11 +12,12 @@
     "@types/node": "^18.14.0",
     "graphql": "^16.6.0",
     "graphql-tools": "^8.3.18",
+    "nodemon": "^2.0.20",
     "prisma": "^4.10.1"
   },
   "scripts": {
     "local-dev": "docker-compose up",
-    "start": "ts-node --esm ./app/index.ts",
+    "start": "nodemon --esm ./app/index.ts",
     "compile": "graphql-codegen",
     "watch": "graphql-codegen -w"
   },
