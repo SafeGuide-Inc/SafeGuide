@@ -3,18 +3,15 @@
 
 ## Tools
 
-- Deno
-  - Oak
+- Node
 - PSQL
 - Docker
 - GraphQL
-- Supabase
 - Terraform
 - Github Actions
 
 
 ## AWS
-
 - Secrets Manager
-- RDS
+- RDS Maybe? 
 
