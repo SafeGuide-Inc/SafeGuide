@@ -31,8 +31,8 @@ model user {
   id             String         @id @default(uuid())
   firstName      String         @map("first_name")
   lastName       String         @map("last_name")
-  email          String         @map("user_id")
-  phoneNumber    String         @map("phone_number")
+  email          String         @map("email") @unique
+  phoneNumber    String         @map("phone_number") @unique
   organizationId String         @map("organization_id")
   status         Status
   createdAt      DateTime       @default(now())

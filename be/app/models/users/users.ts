@@ -31,19 +31,31 @@ export const resolvers = {
         },
     },
     Mutation: {
-        createUser: async (_parent: any, { firstName, lastName, email, phoneNumber, organizationId, status}: any) => {
-            const newUser = await prisma.user.create({
-                data: {
-                    firstName,
-                    lastName,
-                    email,
-                    phoneNumber,
-                    organizationId,
-                    status,
-                    updatedAt: new Date()
-                },
-            })
-            return newUser
+        createUser: async (_parent: any, { firstName, lastName, email, phoneNumber, organizationId, status }: any) => {
+            try {
+                const newUser = await prisma.user.create({
+                    data: {
+                        firstName,
+                        lastName,
+                        email,
+                        phoneNumber,
+                        organizationId,
+                        status,
+                        updatedAt: new Date()
+                    },
+                })
+                return newUser
+            } catch (error: any) {
+                if (error.code === 'P2002') {
+                    console.log(error)
+                    // Handle unique constraint violation error
+                    return new Error('Email already exists');
+                } else {
+                    // Handle other errors
+                    return new Error('Something went wrong');
+                }
+            }
+
         },
     },
 };
