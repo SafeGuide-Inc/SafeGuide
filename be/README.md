@@ -1,4 +1,4 @@
-# GRAPHQL SERVER SETUP
+# GraphQL Server Setup
 1. run `npm run local-dev`
 2. navigate to localhost:4000 to view the graphQL server
 
