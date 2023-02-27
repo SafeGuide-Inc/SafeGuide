@@ -3,8 +3,6 @@ node_modules
 .env
 .DS_STORE
 data
-be/prisma-deno-deploy/generated
-be/prisma-deno-deploy/package-lock.json
 
 app/**/doc/api/
 app/**/ios/Flutter/.last_build_id
