@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.safeguide.safeguide">
-   <application
+    <application
         android:label="Safe Guide"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
@@ -17,12 +17,22 @@
                  while the Flutter UI initializes. After that, this theme continues
                  to determine the Window background behind the Flutter UI. -->
             <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-              />
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme"
+            />
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with YOUR_SCHEME://YOUR_HOST -->
+                <data
+                    android:scheme="io.supabase.flutterquickstart"
+                    android:host="login-callback" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
@@ -32,6 +42,6 @@
             android:value="2" />
 
         <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyB35HzcB0xVMhVpR5aLI__Wm_KqD6Py_Ww"/>
+            android:value="AIzaSyB35HzcB0xVMhVpR5aLI__Wm_KqD6Py_Ww" />
     </application>
 </manifest>

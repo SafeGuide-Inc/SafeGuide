@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:safeguide/screens/graphql.dart';
+import 'package:safeguide/screens/home/report.dart';
+
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:sizer/sizer.dart';
 
 import 'package:safeguide/screens/home/home.dart';
 
@@ -7,27 +13,52 @@ import 'package:safeguide/screens/login/home.dart';
 import 'package:safeguide/screens/login/login.dart';
 import 'package:safeguide/screens/login/activate.dart';
 import 'package:safeguide/screens/login/signup.dart';
-import 'package:sizer/sizer.dart';
+import 'package:safeguide/screens/test.dart';
 
-void main() {
-  runApp(Sizer(builder: (context, orientation, deviceType) {
-    return MaterialApp(
-      theme: ThemeData(
-          appBarTheme: const AppBarTheme(
+void main() async {
+  await Supabase.initialize(
+    url: 'https://xyzcompany.supabase.co',
+    anonKey: 'public-anon-key',
+  );
+
+  final HttpLink httpLink = HttpLink(
+    'https://0239-187-190-165-244.ngrok.io/',
+  );
+
+  final ValueNotifier<GraphQLClient> client = ValueNotifier(
+    GraphQLClient(
+      cache: GraphQLCache(),
+      link: httpLink,
+    ),
+  );
+
+  runApp(
+    Sizer(builder: (context, orientation, deviceType) {
+      return GraphQLProvider(
+        client: client,
+        child: MaterialApp(
+          theme: ThemeData(
+            appBarTheme: const AppBarTheme(
               systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: Colors.white,
-      ))),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const Main(),
-        '/loginHome': (context) => const LoginHome(),
-        '/login': (context) => const Login(),
-        '/activation': (context) => const Activation(),
-        '/signup': (context) => const SignUp(),
-        '/home': (context) => const Home()
-      },
-    );
-  }));
+                statusBarColor: Colors.white,
+              ),
+            ),
+          ),
+          initialRoute: '/',
+          routes: {
+            //'/': (context) => const Main(),
+            '/': (context) => GraphExampleScreen(),
+            '/loginHome': (context) => const LoginHome(),
+            '/login': (context) => const Login(),
+            '/activation': (context) => const Activation(),
+            '/signup': (context) => const SignUp(),
+            '/home': (context) => const Home(),
+            '/report': (context) => ReportIncidentScreen(),
+          },
+        ),
+      );
+    }),
+  );
 }
 
 class Main extends StatefulWidget {
@@ -51,10 +82,11 @@ class _MainState extends State<Main> {
     return const AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-          backgroundColor: Color(0xff1c1e21),
-          body: Center(
-            child: CircularProgressIndicator(),
-          )),
+        backgroundColor: Color(0xff1c1e21),
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
     );
   }
 }

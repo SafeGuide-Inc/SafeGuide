@@ -43,6 +43,8 @@ dependencies:
   lottie: ^1.4.3
   google_maps_flutter: ^2.2.3
   font_awesome_flutter: ^10.3.0
+  graphql_flutter: ^5.1.1
+  supabase_flutter: ^1.4.0
 
 dev_dependencies:
   flutter_test:

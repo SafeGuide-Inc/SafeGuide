@@ -8,8 +8,10 @@ import 'package:responsive_grid/responsive_grid.dart';
 import 'package:safeguide/components/navbar.dart';
 import 'package:safeguide/screens/home/feed.dart';
 import 'package:safeguide/screens/home/mapview.dart';
-import 'package:sizer/sizer.dart';
+import 'package:safeguide/screens/home/notifications.dart';
+import 'package:safeguide/screens/home/profile.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:sizer/sizer.dart';
 
 import '../../components/buttons.dart';
 import '../../components/cardSlider.dart';
@@ -38,7 +40,12 @@ class MainView extends StatefulWidget {
 
 class MainViewState extends State<MainView> {
   int _currentIndex = 0;
-  final List<Widget> _pages = [MapView(), FeedView()];
+  final List<Widget> _pages = [
+    MapView(),
+    FeedView(),
+    NotificationScreen(),
+    ProfileOptions()
+  ];
 
   void changeView(int index) {
     setState(() {

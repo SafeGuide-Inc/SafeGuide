@@ -122,8 +122,9 @@ class _ToggleButtonState extends State<ToggleButton> {
 
 class NotificationButton extends StatelessWidget {
   final int notificationCount;
+  final Function()? onPressed;
 
-  NotificationButton({required this.notificationCount});
+  NotificationButton({required this.notificationCount, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +161,8 @@ class NotificationButton extends StatelessWidget {
         ],
       )),
       onPressed: () {
+        HapticFeedback.lightImpact();
+        onPressed!();
         // Add your button action here
       },
     );

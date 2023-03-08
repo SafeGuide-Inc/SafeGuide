@@ -66,16 +66,22 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                 color: Colors.white,
                 onPressed: () {
                   HapticFeedback.lightImpact();
+                  Navigator.pushNamed(context, '/report');
                 },
               ),
             ),
             NotificationButton(
               notificationCount: 2,
+              onPressed: () {
+                widget.viewChangeFunction(2);
+              },
             ),
             IconButton(
-              icon: const FaIcon(FontAwesomeIcons.user),
+              icon: FaIcon(FontAwesomeIcons.user,
+                  color: widget.index == 3 ? Colors.red : Colors.black),
               onPressed: () {
                 HapticFeedback.lightImpact();
+                widget.viewChangeFunction(3);
               },
             ),
           ],
