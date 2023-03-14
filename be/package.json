@@ -17,7 +17,7 @@
     "prisma": "^4.10.1"
   },
   "scripts": {
-    "local-dev": "docker-compose up",
+    "local-dev": "./scripts/startup.sh",
     "local-dev:rebuild": "docker-compose build --no-cache",
     "start": "nodemon --esm ./app/index.ts",
     "compile": "graphql-codegen",

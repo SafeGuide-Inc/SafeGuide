@@ -9,4 +9,4 @@ RUN yarn prisma generate --schema=./app/prisma/schema.prisma
 
 EXPOSE 4000
 
-CMD ["yarn", "start"]
+CMD ["yarn", "start -s"]

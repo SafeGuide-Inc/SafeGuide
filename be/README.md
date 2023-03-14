@@ -1,6 +1,7 @@
 # GraphQL Server Setup
-1. run `npm run local-dev`
-2. navigate to localhost:4000 to view the graphQL server
+1. run `npm install prisma -g` to install prisma if you don't have it already
+2. run `npm run local-dev`
+3. navigate to localhost:4000 to view the graphQL server
 
 # Notes
 - Your environment should update with changes inside the app directory
