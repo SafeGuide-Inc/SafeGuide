@@ -31,7 +31,7 @@ CREATE TABLE "user" (
 );
 
 -- CreateTable
-CREATE TABLE "devices" (
+CREATE TABLE "device" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "deviceToken" TEXT NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE "devices" (
 );
 
 -- CreateTable
-CREATE TABLE "userSettings" (
+CREATE TABLE "user_settings" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
 
@@ -67,8 +67,8 @@ CREATE TABLE "organization" (
 -- CreateTable
 CREATE TABLE "incidence" (
     "id" TEXT NOT NULL,
-    "lat" TEXT NOT NULL,
-    "long" TEXT NOT NULL,
+    "lat" DOUBLE PRECISION NOT NULL,
+    "long" DOUBLE PRECISION NOT NULL,
     "userId" TEXT NOT NULL,
     "incidence_type_id" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
@@ -77,16 +77,16 @@ CREATE TABLE "incidence" (
 );
 
 -- CreateTable
-CREATE TABLE "incidenceType" (
+CREATE TABLE "incidence_type" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
 
-    CONSTRAINT "incidenceType_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "incidence_type_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "userReports" (
+CREATE TABLE "user_reports" (
     "id" TEXT NOT NULL,
     "reportingUserId" TEXT NOT NULL,
     "incidenceId" TEXT NOT NULL,
@@ -97,16 +97,16 @@ CREATE TABLE "userReports" (
 );
 
 -- AddForeignKey
-ALTER TABLE "devices" ADD CONSTRAINT "devices_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "device" ADD CONSTRAINT "device_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "userSettings" ADD CONSTRAINT "userSettings_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "user_settings" ADD CONSTRAINT "userSettings_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "incidence" ADD CONSTRAINT "incidence_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "incidence" ADD CONSTRAINT "incidence_incidence_type_id_fkey" FOREIGN KEY ("incidence_type_id") REFERENCES "incidenceType"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "incidence" ADD CONSTRAINT "incidence_incidence_type_id_fkey" FOREIGN KEY ("incidence_type_id") REFERENCES "incidence_type"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "userReports" ADD CONSTRAINT "userReports_reportingUserId_fkey" FOREIGN KEY ("reportingUserId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "user_reports" ADD CONSTRAINT "userReports_reportingUserId_fkey" FOREIGN KEY ("reportingUserId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

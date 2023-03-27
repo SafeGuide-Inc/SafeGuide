@@ -13,12 +13,14 @@ export const typeDefs = `#graphql
     organizationId: String
     status: String
     updatedAt: DateTime
+    id: ID!
   }
   type Query {
-    user(id: ID!): User
+    getUser(id: ID!): User
+    getAllUsers: [User]
   }
   type Mutation {
-    createUser(firstName: String!, lastName: String!, email: String!, phoneNumber: String!, organizationId: String! status: String!, updatedAt: DateTime! ): User!
+    createUser(firstName: String!, lastName: String!, email: String!, phoneNumber: String!, organizationId: String!, status: String!, updatedAt: DateTime! ): User!
   }
 
 `;
@@ -26,8 +28,11 @@ export const typeDefs = `#graphql
 // TODO: Let's get some typing here...
 export const resolvers = {
     Query: {
-        user(user: any) {
-            return prisma.user.findUnique(user.id);
+        getUser: async (_parent: any, { id }: any) => {
+            return prisma.user.findUnique({ where: { id } });
+        },
+        getAllUsers() {
+            return prisma.user.findMany();
         },
     },
     Mutation: {
@@ -44,6 +49,7 @@ export const resolvers = {
                         updatedAt: new Date()
                     },
                 })
+                console.log(newUser)
                 return newUser
             } catch (error: any) {
                 if (error.code === 'P2002') {

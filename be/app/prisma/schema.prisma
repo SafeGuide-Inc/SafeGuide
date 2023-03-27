@@ -27,23 +27,35 @@ enum Status {
   Invited
 }
 
+enum Category {
+  Theft
+  Violence
+  ThreateningPerson
+  SuspiciousActivity
+  Hazard
+  Search
+  EmergencyResponder
+  GeneralIncident
+  Other
+}
+
 model user {
   id             String         @id @default(uuid())
   firstName      String         @map("first_name")
   lastName       String         @map("last_name")
-  email          String         @map("email") @unique
-  phoneNumber    String         @map("phone_number") @unique
+  email          String         @unique @map("email")
+  phoneNumber    String         @unique @map("phone_number")
   organizationId String         @map("organization_id")
   status         Status
   createdAt      DateTime       @default(now())
   updatedAt      DateTime
-  devices        devices[]
+  devices        device[]
   userSettings   userSettings[]
   incidence      incidence[]
   userReports    userReports[]
 }
 
-model devices {
+model device {
   id          String @id @default(uuid())
   userId      String
   user        user   @relation(fields: [userId], references: [id])
@@ -55,6 +67,8 @@ model userSettings {
   id     String @id @default(uuid())
   userId String @map("user_id")
   user   user   @relation(fields: [userId], references: [id])
+
+  @@map("user_settings")
 }
 
 model organization {
@@ -71,11 +85,12 @@ model organization {
 }
 
 model incidence {
-  id              String        @id @default(uuid())
-  lat             String
-  long            String
-  userId          String
-  user            user          @relation(fields: [userId], references: [id])
+  id          String @id @default(uuid())
+  lat         Float
+  long        Float
+  userId      String
+  user        user   @relation(fields: [userId], references: [id])
+  existsVotes Int    @default(0) @map("exists_votes") // Ranks the amount of votes an incidence has
   incidenceTypeId String        @map("incidence_type_id")
   incidenceType   incidenceType @relation(fields: [incidenceTypeId], references: [id])
   date            DateTime
@@ -85,7 +100,10 @@ model incidenceType {
   id          String      @id @default(uuid())
   name        String
   description String
+  category    Category
   incidence   incidence[]
+
+  @@map("incidence_type")
 }
 
 model userReports {
@@ -96,4 +114,6 @@ model userReports {
 
   date   DateTime
   reason String
+
+  @@map("user_reports")
 }
