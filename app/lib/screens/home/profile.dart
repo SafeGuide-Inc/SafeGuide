@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ProfileOptions extends StatelessWidget {
   final List<Map<String, String>> _options = [
     {
-      'name': 'Edit profile',
+      'name': 'Account',
       'routeName': '/editProfile',
     },
     {

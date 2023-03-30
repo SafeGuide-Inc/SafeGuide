@@ -58,5 +58,7 @@
 		</array>
 	  </dict>
 	</array>  
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app uses your location to display incidents that have occurred around you. By accessing your location data, we can provide you with the most relevant nearby incidents. </string>
 </dict>
 </plist>
