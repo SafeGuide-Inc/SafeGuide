@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:safeguide/components/successReport.dart';
 import 'package:safeguide/screens/graphql.dart';
 import 'package:safeguide/screens/home/report.dart';
 
@@ -22,7 +23,7 @@ void main() async {
   );
 
   final HttpLink httpLink = HttpLink(
-    'https://0239-187-190-165-244.ngrok.io/',
+    'https://50b0-187-190-165-244.ngrok.io',
   );
 
   final ValueNotifier<GraphQLClient> client = ValueNotifier(
@@ -46,14 +47,15 @@ void main() async {
           ),
           initialRoute: '/',
           routes: {
-            //'/': (context) => const Main(),
-            '/': (context) => GraphExampleScreen(),
+            '/': (context) => const Main(),
+            //'/': (context) => GraphExampleScreen(),
             '/loginHome': (context) => const LoginHome(),
             '/login': (context) => const Login(),
             '/activation': (context) => const Activation(),
             '/signup': (context) => const SignUp(),
             '/home': (context) => const Home(),
-            '/report': (context) => ReportIncidentScreen(),
+            '/report': (context) => ReportIncident(),
+            '/reportSuccess': (context) => SuccessScreen(),
           },
         ),
       );
