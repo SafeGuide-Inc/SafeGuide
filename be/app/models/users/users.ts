@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
 
@@ -13,14 +14,13 @@ export const typeDefs = `#graphql
     organizationId: String
     status: String
     updatedAt: DateTime
-    id: ID!
   }
   type Query {
     getUser(id: ID!): User
     getAllUsers: [User]
   }
   type Mutation {
-    createUser(firstName: String!, lastName: String!, email: String!, phoneNumber: String!, organizationId: String!, status: String!, updatedAt: DateTime! ): User!
+    createUser(firstName: String!, lastName: String!, email: String!, phoneNumber: String!, organizationId: String!, status: String!): User!
   }
 
 `;
@@ -40,6 +40,7 @@ export const resolvers = {
             try {
                 const newUser = await prisma.user.create({
                     data: {
+                        id: uuidv4(),
                         firstName,
                         lastName,
                         email,
@@ -49,19 +50,17 @@ export const resolvers = {
                         updatedAt: new Date()
                     },
                 })
-                console.log(newUser)
                 return newUser
             } catch (error: any) {
+                console.log(error)
                 if (error.code === 'P2002') {
-                    console.log(error)
                     // Handle unique constraint violation error
-                    return new Error('Email already exists');
+                    throw new Error(error.meta.target[0] + ' already exists in the database)');
                 } else {
                     // Handle other errors
-                    return new Error('Something went wrong');
+                    throw new Error('Something went wrong');
                 }
             }
-
         },
     },
 };
