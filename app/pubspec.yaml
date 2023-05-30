@@ -43,7 +43,7 @@ dependencies:
   lottie: ^1.4.3
   google_maps_flutter: ^2.2.3
   font_awesome_flutter: ^10.3.0
-  graphql_flutter: ^5.1.1
+  graphql_flutter: ^5.1.2
   supabase_flutter: ^1.4.0
   geolocator: ^9.0.2
   permission_handler: ^10.2.0

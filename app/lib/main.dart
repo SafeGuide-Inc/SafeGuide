@@ -23,7 +23,7 @@ void main() async {
   );
 
   final HttpLink httpLink = HttpLink(
-    'https://50b0-187-190-165-244.ngrok.io',
+    'https://localhost:4000/graphql',
   );
 
   final ValueNotifier<GraphQLClient> client = ValueNotifier(
