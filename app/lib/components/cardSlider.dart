@@ -43,7 +43,9 @@ class _CardSliderState extends State<CardSlider> {
                     itemBuilder: (context, index) {
                       return Padding(
                           padding: EdgeInsets.only(
-                              left: 13.w, right: 13.w, top: 30.h),
+                            left: 13.w,
+                            right: 13.w,
+                          ),
                           child: GestureDetector(
                               onTap: () {
                                 HapticFeedback.mediumImpact();
@@ -119,8 +121,10 @@ class _CardSliderState extends State<CardSlider> {
                 ),
                 Positioned(
                     left: 3.w,
-                    top: 32 + 32.h,
                     child: Container(
+                      margin: EdgeInsets.only(
+                        top: 5.h,
+                      ),
                       height: 35,
                       width: 35,
                       decoration: BoxDecoration(
@@ -167,8 +171,10 @@ class _CardSliderState extends State<CardSlider> {
                     )),
                 Positioned(
                     right: 3.w,
-                    top: 32 + 32.h,
                     child: Container(
+                      margin: EdgeInsets.only(
+                        top: 5.h,
+                      ),
                       height: 35,
                       width: 35,
                       decoration: BoxDecoration(

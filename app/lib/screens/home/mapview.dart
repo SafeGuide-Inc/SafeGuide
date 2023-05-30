@@ -127,20 +127,11 @@ class _MapViewState extends State<MapView> {
             _controller.complete(controller);
           }),
       Positioned(
-        top: 15.h,
-        left: 0,
-        right: 0,
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-          SizedBox(child: ToggleButton()),
-        ]),
-      ),
-      Positioned(
           bottom: 13.h,
           left: 0,
           right: 0,
           child: SizedBox(
-              height: 45.h,
+              height: 15.h,
               child: CardSlider(
                   cards: cards, goToCardLocation: _goToCardLocation)))
     ]));
