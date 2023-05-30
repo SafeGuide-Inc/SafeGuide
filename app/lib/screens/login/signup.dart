@@ -8,46 +8,44 @@ import '../../components/buttons.dart';
 import '../../components/inputs.dart';
 
 class SignUp extends StatefulWidget {
-  const SignUp({super.key});
+  const SignUp({Key? key}) : super(key: key);
 
   @override
   State<SignUp> createState() => _SignUpState();
 }
 
 class _SignUpState extends State<SignUp> {
+  String userId = '';
+  String email = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      final Map<String, dynamic> arguments =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      setState(() {
+        userId = arguments['userId'] as String;
+        email = arguments['email'] as String;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            leading: Container(
-                margin: EdgeInsets.only(left: 6.w),
-                child: InkWell(
-                  onTap: () => Navigator.pop(context),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.arrow_back_ios_new_rounded,
-                          color: Colors.black, size: 20),
-                      SizedBox(width: 1.w),
-                      Text('Back',
-                          style: GoogleFonts.lato(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500))
-                    ],
-                  ),
-                ))),
         backgroundColor: const Color(0xffF5F5F5),
-        body: ResponsiveGridRow(children: [
+        body: SafeArea(
+            child: ResponsiveGridRow(children: [
           ResponsiveGridCol(
             xs: 12,
             sm: 12,
             md: 6,
-            child: const LimitedBox(
+            child: LimitedBox(
                 maxHeight: double.infinity,
                 maxWidth: double.infinity,
-                child: SignUpContainer()),
+                child: SignUpContainer(userId: userId, email: email)),
           ),
           ResponsiveGridCol(
               xs: 0,
@@ -66,12 +64,19 @@ class _SignUpState extends State<SignUp> {
                       ),
                     )),
               ))
-        ]));
+        ])));
   }
 }
 
 class SignUpContainer extends StatefulWidget {
-  const SignUpContainer({super.key});
+  final String userId;
+  final String email;
+
+  const SignUpContainer({
+    Key? key,
+    required this.userId,
+    required this.email,
+  }) : super(key: key);
 
   @override
   State<SignUpContainer> createState() => _SignUpContainerState();
@@ -81,8 +86,8 @@ class _SignUpContainerState extends State<SignUpContainer> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 85.h,
-      margin: EdgeInsets.only(left: 7.w, right: 7.w),
+      height: 88.h,
+      margin: EdgeInsets.only(left: 7.w, right: 7.w, top: 1.h),
       child: Column(
         children: [
           SizedBox(
@@ -123,7 +128,7 @@ class _SignUpContainerState extends State<SignUpContainer> {
           ),
           Container(
               alignment: AlignmentDirectional.centerStart,
-              child: Text('duck@uoregon.edu',
+              child: Text(widget.email,
                   textAlign: TextAlign.left,
                   style: GoogleFonts.lato(
                       fontSize: 18,

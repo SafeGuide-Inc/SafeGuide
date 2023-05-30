@@ -80,6 +80,8 @@ class LoginContainer extends StatefulWidget {
 }
 
 class _LoginContainerState extends State<LoginContainer> {
+  TextEditingController _codeController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -112,7 +114,12 @@ class _LoginContainerState extends State<LoginContainer> {
           SizedBox(
             height: 7.h,
           ),
-          CodeInput(),
+          CodeInput(
+            controller: _codeController,
+            onSubmitted: (code) {
+              print('Code entered: $code');
+            },
+          ),
           const SizedBox(
             height: 30,
           ),

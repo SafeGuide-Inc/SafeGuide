@@ -1,47 +1,47 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' hide TextInput;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../components/buttons.dart';
 import '../../components/inputs.dart';
 
+final supabase = Supabase.instance.client;
+final storage = FlutterSecureStorage();
+
 class Activation extends StatefulWidget {
-  const Activation({super.key});
+  const Activation({Key? key}) : super(key: key);
 
   @override
   State<Activation> createState() => _ActivationState();
 }
 
 class _ActivationState extends State<Activation> {
-  var step = 0;
+  int _step = 0;
+  String _email = '';
 
-  changeStep(int newStep) {
+  void changeStep(int newStep, [String? email]) {
     setState(() {
-      step = newStep;
+      _step = newStep;
+      if (email != null) _email = email;
     });
   }
 
-  renderer(page) {
+  Widget renderer(int page) {
     switch (page) {
       case 0:
-        return ActivationContainer(
-          stepFunction: changeStep,
-        );
+        return ActivationContainer(stepFunction: changeStep);
       case 1:
-        return ValidateIdentity(
-          stepFunction: changeStep,
-        );
+        return ValidateIdentity(email: _email, stepFunction: changeStep);
       case 2:
-        return DeniedContainer(
-          stepFunction: changeStep,
-        );
+        return DeniedContainer(stepFunction: changeStep);
       default:
-        return ActivationContainer(
-          stepFunction: changeStep,
-        );
+        return ActivationContainer(stepFunction: changeStep);
     }
   }
 
@@ -79,7 +79,7 @@ class _ActivationState extends State<Activation> {
             child: LimitedBox(
                 maxHeight: double.infinity,
                 maxWidth: double.infinity,
-                child: renderer(step)),
+                child: renderer(_step)),
           ),
           ResponsiveGridCol(
               xs: 0,
@@ -103,9 +103,9 @@ class _ActivationState extends State<Activation> {
 }
 
 class ActivationContainer extends StatefulWidget {
-  ActivationContainer({super.key, this.stepFunction});
+  ActivationContainer({Key? key, required this.stepFunction}) : super(key: key);
 
-  var stepFunction;
+  final Function stepFunction;
 
   @override
   State<ActivationContainer> createState() => _ActivationContainerState();
@@ -113,11 +113,37 @@ class ActivationContainer extends StatefulWidget {
 
 class _ActivationContainerState extends State<ActivationContainer> {
   TextEditingController _emailController = TextEditingController();
+  String _email = '';
+
+  String convertToGmailEmail(String email) {
+    // Split the email address into username and domain
+    final parts = email.split('@');
+    if (parts.length == 2) {
+      final username = parts[0];
+      final domain = parts[1];
+
+      // Check if the domain is uoregon.edu
+      if (domain == 'uoregon.edu') {
+        // Replace the domain with gmail.com
+        return '$username@gmail.com';
+      }
+    }
+
+    // Return the original email if it doesn't match the uoregon.edu domain
+    return email;
+  }
+
+  void createUser(String email) async {
+    //await supabase.auth.signOut(); //For test only
+    _email = email;
+    await supabase.auth
+        .signInWithOtp(email: email)
+        .then((value) => {widget.stepFunction(1, _email)});
+  }
 
   validateEmail() {
-    print(_emailController.text);
     if (_emailController.text.contains('.edu')) {
-      widget.stepFunction(1);
+      createUser(convertToGmailEmail(_emailController.text));
     } else {
       widget.stepFunction(2);
     }
@@ -243,27 +269,45 @@ class _DeniedContainerState extends State<DeniedContainer> {
 }
 
 class ValidateIdentity extends StatefulWidget {
-  ValidateIdentity({super.key, this.stepFunction});
+  ValidateIdentity({Key? key, required this.stepFunction, required this.email})
+      : super(key: key);
 
-  var stepFunction;
+  final Function stepFunction;
+  final String email;
+
   @override
   State<ValidateIdentity> createState() => _ValidateIdentityState();
 }
 
 class _ValidateIdentityState extends State<ValidateIdentity> {
-  FocusNode _firstDigitFocus = FocusNode();
-  FocusNode _secondDigitFocus = FocusNode();
-  FocusNode _thirdDigitFocus = FocusNode();
-  FocusNode _fourthDigitFocus = FocusNode();
-  FocusNode _fifthDigitFocus = FocusNode();
-  FocusNode _sixthDigitFocus = FocusNode();
+  TextEditingController _codeController = TextEditingController();
+  String _code = '';
 
-  TextEditingController _firstDigitController = TextEditingController();
-  TextEditingController _secondDigitController = TextEditingController();
-  TextEditingController _thirdDigitController = TextEditingController();
-  TextEditingController _fourthDigitController = TextEditingController();
-  TextEditingController _fifthDigitController = TextEditingController();
-  TextEditingController _sixthDigitController = TextEditingController();
+  Future<void> storeUserId(String userId) async {
+    await storage.write(key: 'userId', value: userId);
+  }
+
+  Future<void> validateAccess(String email, String token) async {
+    print(email + ' ' + token);
+    final response = await supabase.auth
+        .verifyOTP(email: email, token: token, type: OtpType.magiclink);
+
+    print(response);
+    print(response.user?.id);
+    print(response.user?.email);
+
+    final user = response.user;
+
+    if (user != null) {
+      String userId = user.id;
+      print('User ID: ' + userId);
+      await storeUserId(userId);
+      Navigator.pushNamed(context, '/signup',
+          arguments: {'userId': userId, 'email': email});
+    } else {
+      print('Error validating user');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -297,14 +341,25 @@ class _ValidateIdentityState extends State<ValidateIdentity> {
           SizedBox(
             height: 7.h,
           ),
-          CodeInput(),
+          CodeInput(
+            controller: _codeController,
+            onSubmitted: (code) {
+              setState(() {
+                _code = code;
+              });
+            },
+          ),
           const SizedBox(
             height: 30,
           ),
           Button(
               isLoading: false,
               title: 'Verify',
-              onPressed: () => Navigator.pushNamed(context, '/signup')),
+              onPressed: () async {
+                if (_code.length == 6) {
+                  await validateAccess(widget.email, _code);
+                }
+              }),
           const SizedBox(height: 70),
           Text('Not receiving the code?',
               textAlign: TextAlign.left,

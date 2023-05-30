@@ -69,24 +69,38 @@ class _TextInputState extends State<TextInput> {
 }
 
 class CodeInput extends StatefulWidget {
+  final ValueChanged<String> onSubmitted;
+
+  CodeInput(
+      {required this.onSubmitted, required TextEditingController controller});
+
   @override
   _CodeInputState createState() => _CodeInputState();
 }
 
 class _CodeInputState extends State<CodeInput> {
-  FocusNode _firstDigitFocus = FocusNode();
-  FocusNode _secondDigitFocus = FocusNode();
-  FocusNode _thirdDigitFocus = FocusNode();
-  FocusNode _fourthDigitFocus = FocusNode();
-  FocusNode _fifthDigitFocus = FocusNode();
-  FocusNode _sixthDigitFocus = FocusNode();
+  List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
+  List<TextEditingController> _controllers =
+      List.generate(6, (_) => TextEditingController());
 
-  TextEditingController _firstDigitController = TextEditingController();
-  TextEditingController _secondDigitController = TextEditingController();
-  TextEditingController _thirdDigitController = TextEditingController();
-  TextEditingController _fourthDigitController = TextEditingController();
-  TextEditingController _fifthDigitController = TextEditingController();
-  TextEditingController _sixthDigitController = TextEditingController();
+  void _handleTextChange(String text, int index) {
+    if (text.length == 1 && index < 5) {
+      _focusNodes[index].unfocus();
+      FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
+    }
+
+    if (index == 5) {
+      _focusNodes[index].unfocus();
+      widget.onSubmitted(
+        _controllers.map((controller) => controller.text).join(),
+      );
+    }
+  }
+
+  void _clearFields() {
+    _controllers.forEach((controller) => controller.clear());
+    FocusScope.of(context).requestFocus(_focusNodes[0]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,181 +109,35 @@ class _CodeInputState extends State<CodeInput> {
       children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(
+          children: List.generate(
+            6,
+            (index) => SizedBox(
               width: 40,
               child: TextField(
-                focusNode: _firstDigitFocus,
-                controller: _firstDigitController,
+                focusNode: _focusNodes[index],
+                controller: _controllers[index],
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                    fontSize: 24, fontWeight: FontWeight.w400),
+                onChanged: (text) => _handleTextChange(text, index),
                 decoration: InputDecoration(
-                    enabledBorder: const OutlineInputBorder(
-                        borderSide:
-                            BorderSide(width: 2, color: Color(0xff79747E))),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    filled: true,
-                    fillColor: const Color(0xffFFFFFF)),
-                onChanged: (text) {
-                  if (text.length == 1) {
-                    _firstDigitFocus.unfocus();
-                    FocusScope.of(context).requestFocus(_secondDigitFocus);
-                  }
-                },
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2, color: Color(0xff79747E)),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  filled: true,
+                  fillColor: Color(0xffFFFFFF),
+                ),
               ),
             ),
-            SizedBox(
-              width: 40,
-              child: TextField(
-                decoration: InputDecoration(
-                    enabledBorder: const OutlineInputBorder(
-                        borderSide:
-                            BorderSide(width: 2, color: Color(0xff79747E))),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    filled: true,
-                    fillColor: const Color(0xffFFFFFF)),
-                focusNode: _secondDigitFocus,
-                controller: _secondDigitController,
-                keyboardType: TextInputType.number,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                    fontSize: 24, fontWeight: FontWeight.w400),
-                onChanged: (text) {
-                  if (text.length == 1) {
-                    _secondDigitFocus.unfocus();
-                    FocusScope.of(context).requestFocus(_thirdDigitFocus);
-                  }
-                },
-              ),
-            ),
-            Container(
-              alignment: Alignment.center,
-              width: 40,
-              child: TextField(
-                decoration: InputDecoration(
-                    enabledBorder: const OutlineInputBorder(
-                        borderSide:
-                            BorderSide(width: 2, color: Color(0xff79747E))),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    filled: true,
-                    fillColor: const Color(0xffFFFFFF)),
-                focusNode: _thirdDigitFocus,
-                controller: _thirdDigitController,
-                keyboardType: TextInputType.number,
-                textAlign: TextAlign.start,
-                style: GoogleFonts.poppins(
-                    fontSize: 24, fontWeight: FontWeight.w400),
-                onChanged: (text) {
-                  if (text.length == 1) {
-                    _thirdDigitFocus.unfocus();
-                    FocusScope.of(context).requestFocus(_fourthDigitFocus);
-                  }
-                },
-              ),
-            ),
-            SizedBox(
-              width: 40,
-              child: TextField(
-                decoration: InputDecoration(
-                    enabledBorder: const OutlineInputBorder(
-                        borderSide:
-                            BorderSide(width: 2, color: Color(0xff79747E))),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    filled: true,
-                    fillColor: const Color(0xffFFFFFF)),
-                focusNode: _fourthDigitFocus,
-                controller: _fourthDigitController,
-                keyboardType: TextInputType.number,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                    fontSize: 24, fontWeight: FontWeight.w400),
-                onChanged: (text) {
-                  if (text.length == 1) {
-                    _fourthDigitFocus.unfocus();
-                    FocusScope.of(context).requestFocus(_fifthDigitFocus);
-                  }
-                },
-              ),
-            ),
-            SizedBox(
-              width: 40,
-              child: TextField(
-                decoration: InputDecoration(
-                    enabledBorder: const OutlineInputBorder(
-                        borderSide:
-                            BorderSide(width: 2, color: Color(0xff79747E))),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    filled: true,
-                    fillColor: const Color(0xffFFFFFF)),
-                focusNode: _fifthDigitFocus,
-                controller: _fifthDigitController,
-                keyboardType: TextInputType.number,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                    fontSize: 24, fontWeight: FontWeight.w400),
-                onChanged: (text) {
-                  if (text.length == 1) {
-                    _fifthDigitFocus.unfocus();
-                    FocusScope.of(context).requestFocus(_sixthDigitFocus);
-                  }
-                },
-              ),
-            ),
-            SizedBox(
-              width: 40,
-              child: TextField(
-                decoration: InputDecoration(
-                    enabledBorder: const OutlineInputBorder(
-                        borderSide:
-                            BorderSide(width: 2, color: Color(0xff79747E))),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    filled: true,
-                    fillColor: const Color(0xffFFFFFF)),
-                focusNode: _sixthDigitFocus,
-                controller: _sixthDigitController,
-                keyboardType: TextInputType.number,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                    fontSize: 24, fontWeight: FontWeight.w400),
-                onChanged: (text) {
-                  if (text.length == 1) {
-                    _sixthDigitFocus.unfocus();
-                  }
-                },
-              ),
-            ),
-          ],
+          ),
         ),
-        SizedBox(
-          height: 3.h,
-        ),
-        SizedBox(
-          child: InkWell(
-            child: const Text(
-              'Clear',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.redAccent,
-              ),
-            ),
-            onTap: () {
-              HapticFeedback.lightImpact();
-              _firstDigitController.clear();
-              _secondDigitController.clear();
-              _thirdDigitController.clear();
-              _fourthDigitController.clear();
-              _fifthDigitController.clear();
-              _sixthDigitController.clear();
-              _firstDigitFocus.requestFocus();
-            },
+        TextButton(
+          onPressed: _clearFields,
+          child: Text(
+            'Clear',
+            style: TextStyle(fontSize: 16, color: Colors.redAccent),
           ),
         ),
       ],

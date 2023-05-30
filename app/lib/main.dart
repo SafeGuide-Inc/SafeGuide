@@ -17,10 +17,11 @@ import 'package:safeguide/screens/login/signup.dart';
 import 'package:safeguide/screens/test.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
-    url: 'https://xyzcompany.supabase.co',
-    anonKey: 'public-anon-key',
-  );
+      url: 'https://scmtwxdvsullwsfpzhcp.supabase.co',
+      anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjbXR3eGR2c3VsbHdzZnB6aGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjkxNjU0MzMsImV4cCI6MTk4NDc0MTQzM30.vRghy38_90SkkOP-6LL5LicsFI-ehf_gp6oSMIBxmYQ');
 
   final HttpLink httpLink = HttpLink(
     'https://localhost:4000/graphql',
@@ -52,7 +53,7 @@ void main() async {
             '/loginHome': (context) => const LoginHome(),
             '/login': (context) => const Login(),
             '/activation': (context) => const Activation(),
-            '/signup': (context) => const SignUp(),
+            '/signup': (context) => SignUp(),
             '/home': (context) => const Home(),
             '/report': (context) => ReportIncident(),
             '/reportSuccess': (context) => SuccessScreen(),
