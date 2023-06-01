@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:safeguide/const/types.dart';
 import 'package:sizer/sizer.dart';
 
 class FeedCard extends StatelessWidget {
@@ -38,15 +39,6 @@ class FeedCard extends StatelessWidget {
   }
 }
 
-class Incident {
-  final String name;
-  final IconData icon;
-  final String id;
-  final String description;
-
-  Incident(this.name, this.icon, this.id, this.description);
-}
-
 class IncidentDetails extends StatelessWidget {
   final Incident incident;
   final VoidCallback onBack;
@@ -60,8 +52,8 @@ class IncidentDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      Container(height: 15.h, color: Colors.transparent),
       Container(
+        margin: EdgeInsets.symmetric(horizontal: 3.w),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10.0),
@@ -72,6 +64,7 @@ class IncidentDetails extends StatelessWidget {
           children: [
             const SizedBox(height: 10),
             Container(
+                width: 83.w,
                 margin: const EdgeInsets.only(left: 20, right: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -88,27 +81,36 @@ class IncidentDetails extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ),
-                    Text(
-                      incident.name,
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
+                    SizedBox(width: 3.w),
+                    Container(
+                      width: 45.w,
+                      child: Text(
+                        incident.name,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                    IconButton(
-                      padding: const EdgeInsets.only(bottom: 10, left: 25),
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        HapticFeedback.mediumImpact();
-                        onBack();
-                      },
+                    SizedBox(width: 3.w),
+                    SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: IconButton(
+                        padding: const EdgeInsets.only(bottom: 10, left: 25),
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          HapticFeedback.mediumImpact();
+                          onBack();
+                        },
+                      ),
                     ),
                   ],
                 )),
             const SizedBox(height: 10),
             Container(
                 margin: const EdgeInsets.only(left: 20, right: 20),
-                child: const Text(
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus id tellus sapien. Sed vulputate ipsum in enim maximus sodales. Sed vel malesuada dolor.',
-                )),
+                child: Text(incident.description)),
             const SizedBox(height: 25),
           ],
         ),

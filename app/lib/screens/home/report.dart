@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:safeguide/api/consts.dart';
 import 'package:safeguide/api/queries.dart';
 import 'package:safeguide/components/cards.dart';
+import 'package:safeguide/const/types.dart';
 import 'package:safeguide/const/utils.dart';
 import 'package:sizer/sizer.dart';
 import 'package:safeguide/components/buttons.dart';
@@ -21,7 +22,6 @@ class _ReportIncidentState extends State<ReportIncident> {
   Completer<GoogleMapController> _controller = Completer();
   Set<Marker> _markers = {};
   late Future<LatLng> _currentLocation;
-  bool _showSubmitButton = false;
   List<Incident> _incidents = [];
   Incident? _selectedIncident;
 
@@ -65,9 +65,13 @@ class _ReportIncidentState extends State<ReportIncident> {
 
   void _onSubmitPressed() {
     if (_selectedIncident != null && _markers.isNotEmpty) {
+      HapticFeedback.heavyImpact();
       print('Incident Type: ${_selectedIncident!.name}');
       print('Latitude: ${_markers.first.position.latitude}');
       print('Longitude: ${_markers.first.position.longitude}');
+      print('Incident Id: ${_selectedIncident!.id}');
+      print('Current DateTime: ${DateTime.now().toUtc()}');
+
       Navigator.pop(context);
       Navigator.pushNamed(context, '/reportSuccess');
     }
@@ -106,6 +110,20 @@ class _ReportIncidentState extends State<ReportIncident> {
     });
   }
 
+  void _selectIncident(Incident incident) {
+    setState(() {
+      _selectedIncident = incident;
+    });
+    HapticFeedback.mediumImpact();
+  }
+
+  void _deselectIncident() {
+    print('Deselecting incident');
+    setState(() {
+      _selectedIncident = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,148 +151,218 @@ class _ReportIncidentState extends State<ReportIncident> {
           ),
         ),
       ),
-      body: Stack(children: <Widget>[
+      body: _selectedIncident == null
+          ? IncidentLister(
+              incidentsData: _incidents,
+              selectIncident: _selectIncident,
+            )
+          : IncidentMarker(
+              selectedIncident: _selectedIncident!,
+              deselectIncident: _deselectIncident,
+              currentLocation: _currentLocation,
+              onMapCreated: _onMapCreated,
+              onMapTapped: _onMapTapped,
+              markers: _markers,
+              submitIncident: _onSubmitPressed,
+            ),
+    );
+  }
+}
+
+class IncidentLister extends StatefulWidget {
+  const IncidentLister(
+      {super.key, required this.incidentsData, required this.selectIncident});
+
+  final List incidentsData;
+  final selectIncident;
+
+  @override
+  State<IncidentLister> createState() => _IncidentListerState();
+}
+
+class _IncidentListerState extends State<IncidentLister> {
+  final TextEditingController _filterController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
         Container(
-          height: 100.h,
-          child: FutureBuilder<LatLng>(
-            future: _currentLocation,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                LatLng? target = snapshot.data;
-                if (target != null) {
-                  return GoogleMap(
-                    initialCameraPosition: CameraPosition(
-                      target:
-                          LatLng(target.latitude + 0.0003, target.longitude),
-                      zoom: 19.0,
-                    ),
-                    myLocationEnabled: true,
-                    myLocationButtonEnabled: true,
-                    onMapCreated: _onMapCreated,
-                    onTap: _onMapTapped,
-                    markers: _markers,
-                  );
-                }
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
-              return Center(child: CircularProgressIndicator());
+          child: TextField(
+            controller: _filterController,
+            decoration: InputDecoration(
+              labelText: "Filter incidents",
+              border: OutlineInputBorder(),
+              suffixIcon: Icon(Icons.search),
+            ),
+            onChanged: (value) {
+              // Add your filter logic here
             },
           ),
         ),
-        Positioned(
-            top: 0,
-            child: Container(
+        Expanded(
+          child: Container(
+              decoration: BoxDecoration(color: Colors.white),
               padding: const EdgeInsets.only(left: 10, right: 10),
-              width: 100.w,
-              height: 51.h,
-              child: _selectedIncident == null
-                  ? GridView.count(
-                      crossAxisCount: 2,
-                      childAspectRatio: 2.3,
-                      children: _incidents.map((incident) {
-                        return GestureDetector(
-                          onTap: () {
-                            HapticFeedback.mediumImpact();
-                            setState(() {
-                              _selectedIncident = incident;
-                            });
-                          },
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
+              width: MediaQuery.of(context).size.width,
+              child: GridView.count(
+                crossAxisCount: 2,
+                childAspectRatio: 2.3,
+                children: widget.incidentsData.map((incident) {
+                  return GestureDetector(
+                    onTap: () => widget.selectIncident(incident),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(left: 10),
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(left: 10),
-                                  width: 50,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Icon(
-                                    incident.icon,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    padding: EdgeInsets.only(left: 10),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      incident.name,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            child: Icon(
+                              getIconForIncident(incident.name),
+                              color: Colors.white,
                             ),
                           ),
-                        );
-                      }).toList(),
-                    )
-                  : IncidentDetails(
-                      incident: _selectedIncident!,
-                      onBack: () {
-                        setState(() {
-                          _selectedIncident = null;
-                        });
-                      },
-                    ),
-            )),
-        if (_selectedIncident != null && _markers.isEmpty)
-          Positioned(
-              bottom: 80,
-              left: 0,
-              right: 0,
-              child: Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                width: 100.w,
-                child: Center(
-                  child: Text(
-                    'Tap on the map to select the location of the incident.',
-                    style: GoogleFonts.roboto(
-                      textStyle: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.only(left: 10),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                incident.name,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
+                  );
+                }).toList(),
               )),
-        if (_selectedIncident != null && _markers.isNotEmpty)
-          Positioned(
-            bottom: 20,
+        ),
+      ],
+    );
+  }
+}
+
+class IncidentMarker extends StatefulWidget {
+  const IncidentMarker(
+      {super.key,
+      required this.currentLocation,
+      required this.markers,
+      required this.onMapCreated,
+      required this.onMapTapped,
+      required this.selectedIncident,
+      required this.deselectIncident,
+      required this.submitIncident});
+  final currentLocation;
+  final markers;
+  final onMapCreated;
+  final onMapTapped;
+  final selectedIncident;
+  final deselectIncident;
+  final submitIncident;
+  @override
+  State<IncidentMarker> createState() => _IncidentMarkerState();
+}
+
+class _IncidentMarkerState extends State<IncidentMarker> {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(children: <Widget>[
+      Expanded(
+          child: Container(
+        child: FutureBuilder<LatLng>(
+          future: widget.currentLocation,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              LatLng? target = snapshot.data;
+              if (target != null) {
+                return GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(target.latitude + 0.0003, target.longitude),
+                    zoom: 19.0,
+                  ),
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: true,
+                  onMapCreated: widget.onMapCreated,
+                  onTap: widget.onMapTapped,
+                  markers: widget.markers,
+                );
+              }
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            return Center(child: CircularProgressIndicator());
+          },
+        ),
+      )),
+      if (widget.selectedIncident != null)
+        Positioned(
+          top: 15.h,
+          child: IncidentDetails(
+            incident: widget.selectedIncident!,
+            onBack: () {
+              widget.deselectIncident();
+            },
+          ),
+        ),
+      if (widget.selectedIncident != null && widget.markers.isEmpty)
+        Positioned(
+            bottom: 80,
             left: 0,
             right: 0,
             child: Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
               margin: EdgeInsets.symmetric(horizontal: 20),
               width: 100.w,
               child: Center(
-                child: Button(
-                  onPressed: () {
-                    HapticFeedback.heavyImpact();
-                    _onSubmitPressed();
-                  },
-                  title: 'Submit report',
+                child: Text(
+                  'Tap on the map to select the location of the incident.',
+                  style: GoogleFonts.roboto(
+                    textStyle: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  textAlign: TextAlign.center,
                 ),
+              ),
+            )),
+      if (widget.selectedIncident != null && widget.markers.isNotEmpty)
+        Positioned(
+          bottom: 20,
+          left: 0,
+          right: 0,
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            width: 100.w,
+            child: Center(
+              child: Button(
+                onPressed: () {
+                  widget.submitIncident();
+                },
+                title: 'Submit report',
               ),
             ),
           ),
-      ]),
-    );
+        ),
+    ]);
   }
 }
