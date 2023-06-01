@@ -19,6 +19,8 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> {
+  bool _showDetails = false;
+
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
