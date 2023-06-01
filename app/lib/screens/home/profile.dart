@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ProfileOptions extends StatelessWidget {
   final List<Map<String, String>> _options = [
     {
       'name': 'Account',
-      'routeName': '/editProfile',
+      'routeName': '/userAccount',
     },
     {
       'name': 'Notifications',
@@ -28,6 +29,7 @@ class ProfileOptions extends StatelessWidget {
           title: Text(_options[index]['name']!),
           trailing: Icon(Icons.arrow_forward_ios),
           onTap: () {
+            HapticFeedback.mediumImpact();
             Navigator.pushNamed(context, _options[index]['routeName']!);
           },
         );
