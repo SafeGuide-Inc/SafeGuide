@@ -133,7 +133,8 @@ class _MapViewState extends State<MapView> {
           child: SizedBox(
               height: 15.h,
               child: CardSlider(
-                  cards: cards, goToCardLocation: _goToCardLocation)))
+                  cards: cards, goToCardLocation: _goToCardLocation))),
+      Positioned(top: 15.h, right: 5.w, child: const EmergencyButton())
     ]));
   }
 }

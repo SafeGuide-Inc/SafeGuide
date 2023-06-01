@@ -185,74 +185,83 @@ class _IncidentListerState extends State<IncidentLister> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          child: TextField(
-            controller: _filterController,
-            decoration: InputDecoration(
-              labelText: "Filter incidents",
-              border: OutlineInputBorder(),
-              suffixIcon: Icon(Icons.search),
-            ),
-            onChanged: (value) {
-              // Add your filter logic here
-            },
-          ),
-        ),
-        Expanded(
-          child: Container(
-              decoration: BoxDecoration(color: Colors.white),
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              width: MediaQuery.of(context).size.width,
-              child: GridView.count(
-                crossAxisCount: 2,
-                childAspectRatio: 2.3,
-                children: widget.incidentsData.map((incident) {
-                  return GestureDetector(
-                    onTap: () => widget.selectIncident(incident),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(left: 10),
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Icon(
-                              getIconForIncident(incident.name),
-                              color: Colors.white,
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.only(left: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                incident.name,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.left,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+    return SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            Container(
+              color: Colors.white,
+              margin: EdgeInsets.symmetric(horizontal: 3.w, vertical: 2.h),
+              height: 5.h,
+              child: TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: const BorderSide(
+                      color: Colors.black,
+                      width: 2.0,
                     ),
-                  );
-                }).toList(),
-              )),
-        ),
-      ],
-    );
+                  ),
+                  hintText: 'Search',
+                  prefixIcon: const Icon(Icons.search),
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 10.0), // Adjust the padding as needed
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                  decoration: BoxDecoration(color: Colors.white),
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  width: MediaQuery.of(context).size.width,
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    childAspectRatio: 2.3,
+                    children: widget.incidentsData.map((incident) {
+                      return GestureDetector(
+                        onTap: () => widget.selectIncident(incident),
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(left: 10),
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Icon(
+                                  getIconForIncident(incident.name),
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Expanded(
+                                child: Container(
+                                  padding: EdgeInsets.only(left: 10),
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    incident.name,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  )),
+            ),
+          ],
+        ));
   }
 }
 
