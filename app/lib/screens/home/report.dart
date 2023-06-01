@@ -4,9 +4,13 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:safeguide/api/consts.dart';
+import 'package:safeguide/api/queries.dart';
+import 'package:safeguide/components/cards.dart';
+import 'package:safeguide/const/utils.dart';
 import 'package:sizer/sizer.dart';
-
 import 'package:safeguide/components/buttons.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 class ReportIncident extends StatefulWidget {
   @override
@@ -18,23 +22,14 @@ class _ReportIncidentState extends State<ReportIncident> {
   Set<Marker> _markers = {};
   late Future<LatLng> _currentLocation;
   bool _showSubmitButton = false;
-  final List<Incident> _incidents = [
-    Incident('Robber', Icons.warning),
-    Incident('Crash', Icons.car_crash),
-    Incident('Sketchy activity', Icons.report_problem),
-    Incident('Theft', Icons.security),
-    Incident('Vandalism', Icons.vpn_lock),
-    Incident('Assault', Icons.person),
-    Incident('Fire', Icons.fire_extinguisher),
-    Incident('Suspicious person', Icons.visibility),
-    Incident('Other', Icons.help_outline),
-  ];
+  List<Incident> _incidents = [];
   Incident? _selectedIncident;
 
   @override
   void initState() {
     super.initState();
     _currentLocation = _getCurrentLocation();
+    _fetchIncidents();
   }
 
   Future<LatLng> _getCurrentLocation() async {
@@ -57,10 +52,9 @@ class _ReportIncidentState extends State<ReportIncident> {
     );
 
     if (distanceInMeters <= 402.00) {
-      // 804.672 meters is approximately half a mile.
       setState(() {
         HapticFeedback.mediumImpact();
-        _markers.clear(); // Clear existing markers before adding a new one.
+        _markers.clear();
         _markers.add(Marker(
           markerId: MarkerId(position.toString()),
           position: position,
@@ -77,6 +71,39 @@ class _ReportIncidentState extends State<ReportIncident> {
       Navigator.pop(context);
       Navigator.pushNamed(context, '/reportSuccess');
     }
+  }
+
+  void _fetchIncidents() async {
+    final ValueNotifier<GraphQLClient> client = ValueNotifier(
+      GraphQLClient(
+        link: httpLink,
+        cache: GraphQLCache(),
+      ),
+    );
+
+    final QueryOptions options = QueryOptions(
+      document: gql(getIncidenceTypeList),
+    );
+
+    final QueryResult result = await client.value.query(options);
+
+    if (result.hasException) {
+      print(result.exception);
+      return;
+    }
+
+    final List incidentsData = result.data?['getIncidenceTypeList'] ?? [];
+
+    setState(() {
+      _incidents = incidentsData.map((incidentData) {
+        return Incident(
+          incidentData['name'],
+          getIconForIncident(incidentData['name']),
+          incidentData['id'],
+          incidentData['description'],
+        );
+      }).toList();
+    });
   }
 
   @override
@@ -218,7 +245,7 @@ class _ReportIncidentState extends State<ReportIncident> {
                   child: Text(
                     'Tap on the map to select the location of the incident.',
                     style: GoogleFonts.roboto(
-                      textStyle: TextStyle(
+                      textStyle: const TextStyle(
                         color: Colors.black,
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
@@ -249,83 +276,5 @@ class _ReportIncidentState extends State<ReportIncident> {
           ),
       ]),
     );
-  }
-}
-
-class Incident {
-  final String name;
-  final IconData icon;
-
-  Incident(this.name, this.icon);
-}
-
-class IncidentDetails extends StatelessWidget {
-  final Incident incident;
-  final VoidCallback onBack;
-
-  const IncidentDetails({
-    Key? key,
-    required this.incident,
-    required this.onBack,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(children: [
-      Container(height: 15.h, color: Colors.transparent),
-      Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 10),
-            Container(
-                margin: EdgeInsets.only(left: 20, right: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Icon(
-                        incident.icon,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Container(
-                        child: Text(
-                      '${incident.name}',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    )),
-                    IconButton(
-                      padding: EdgeInsets.only(bottom: 10, left: 25),
-                      icon: Icon(Icons.close),
-                      onPressed: () {
-                        HapticFeedback.mediumImpact();
-                        onBack();
-                      },
-                    ),
-                  ],
-                )),
-            SizedBox(height: 10),
-            Container(
-                margin: EdgeInsets.only(left: 20, right: 20),
-                child: Text(
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus id tellus sapien. Sed vulputate ipsum in enim maximus sodales. Sed vel malesuada dolor.',
-                )),
-            SizedBox(height: 25),
-          ],
-        ),
-      )
-    ]);
   }
 }
