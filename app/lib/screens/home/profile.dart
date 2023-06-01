@@ -27,7 +27,7 @@ class ProfileOptions extends StatelessWidget {
       itemBuilder: (context, index) {
         return ListTile(
           title: Text(_options[index]['name']!),
-          trailing: Icon(Icons.arrow_forward_ios),
+          trailing: const Icon(Icons.arrow_forward_ios),
           onTap: () {
             HapticFeedback.mediumImpact();
             Navigator.pushNamed(context, _options[index]['routeName']!);
@@ -35,7 +35,7 @@ class ProfileOptions extends StatelessWidget {
         );
       },
       separatorBuilder: (context, index) {
-        return Divider();
+        return const Divider();
       },
       itemCount: _options.length,
     );

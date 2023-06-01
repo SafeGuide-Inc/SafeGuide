@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:safeguide/components/successReport.dart';
-import 'package:safeguide/screens/graphql.dart';
 import 'package:safeguide/screens/home/report.dart';
 import 'package:safeguide/screens/profile/account.dart';
+import 'package:safeguide/screens/profile/notifications.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -59,6 +59,7 @@ void main() async {
             '/report': (context) => ReportIncident(),
             '/reportSuccess': (context) => SuccessScreen(),
             '/userAccount': (context) => const UserAccount(),
+            '/notifications': (context) => UserNotifications(),
           },
         ),
       );
