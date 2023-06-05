@@ -31,6 +31,7 @@ export const typeDefs = `#graphql
   type Query {
     getIncidence(id: ID!): Incidence
     getIncidencesWithinRangeInMiles(radiusInMeters: Float!, center: Point!): [Incidence]
+    getAllIncidences: [Incidence]
     getIncidenceTypeList: [IncidenceType]
   }
 
@@ -42,69 +43,72 @@ export const typeDefs = `#graphql
 `;
 
 export const resolvers = {
-    Query: {
-        getIncidence: async (_parent: any, { id }: any) => {
-            return prisma.incidence.findUnique({
-                include: {
-                    incidenceType: true,
-                },
-                where: { id }
-            });
+  Query: {
+    getIncidence: async (_parent: any, { id }: any) => {
+      return prisma.incidence.findUnique({
+        include: {
+          incidenceType: true,
         },
-        getIncidenceTypeList: async (_parent: any) => {
-            return prisma.incidenceType.findMany();
-        },
-        getIncidencesWithinRangeInMiles: async (_: any, { radiusInMeters, center }: { radiusInMeters: number; center: Point }): Promise<incidence[]> => {
-            const { lat, long } = center;
-            // 69 miles per degree of latitude (or longitude) this is 
-            // a rough approximation because the earth is not a perfect sphere
-            const incidencesWithinCircle: incidence[]  = await prisma.$queryRaw`
-                    SELECT *
-                    FROM "Incidence"
-                    JOIN ON "Incidence"."incidenceTypeId" = "IncidenceType"."id"
-                    WHERE ST_DWithin(
-                      ST_GeographyFromText('SRID=4326;POINT(${long} ${lat})'),
-                      location,
-                      ${radiusInMeters}
-                    )
-           `                   
-            return incidencesWithinCircle;
-        },
+        where: { id }
+      });
     },
+    getIncidenceTypeList: async (_parent: any) => {
+      return prisma.incidenceType.findMany();
+    },
+    getAllIncidences: async (_parent: any) => {
+      return prisma.incidence.findMany();
+    },
+    getIncidencesWithinRangeInMiles: async (_: any, { radiusInMeters, center }: { radiusInMeters: number; center: Point }): Promise<incidence[]> => {
+      const { lat, long } = center;
+      // 69 miles per degree of latitude (or longitude) this is 
+      // a rough approximation because the earth is not a perfect sphere
+      const incidencesWithinCircle: incidence[] = await prisma.$queryRaw`
+          SELECT *
+            FROM incidence
+            JOIN incidence_type on incidence.incidence_type_id = incidence_type.id
+            WHERE ST_DWithin(
+                    ST_GeographyFromText('SRID=4326;POINT(${long} ${lat})'),
+                    location,
+                    ${radiusInMeters}
+                  )
+           `
+      return incidencesWithinCircle;
+    },
+  },
 
-    Mutation: {
-        createIncidence: async (_parent: any, { lat, long, userId, incidenceTypeId, date }: any) => {
-          let newIncidence;
-            try {
-                newIncidence = await prisma.incidence.create({
-                    data: {
-                        lat,
-                        long,
-                        userId,
-                        incidenceTypeId,
-                        date,
-                    },
-                })
-            } catch (error: any) {
-                console.error(error);
-            }
-            return newIncidence
-        },
-        incidentExistsVote: async (_parent: any, { id, stillExists }: any) => {
-            try {
-                const incidence = await prisma.incidence.findUnique({ where: { id } });
-                if (!incidence) return new Error('Incidence not found');
-                let vote = stillExists ? 1 : -1;
-                const updatedIncidence = await prisma.incidence.update({
-                    where: { id },
-                    data: {
-                        existsVotes: incidence.existsVotes + vote
-                    },
-                })
-                return updatedIncidence
-            } catch (error: any) {
-                console.error(error);
-            }
-        },
+  Mutation: {
+    createIncidence: async (_parent: any, { lat, long, userId, incidenceTypeId, date }: any) => {
+      let newIncidence;
+      try {
+        newIncidence = await prisma.incidence.create({
+          data: {
+            lat,
+            long,
+            userId,
+            incidenceTypeId,
+            date,
+          },
+        })
+      } catch (error: any) {
+        console.error(error);
+      }
+      return newIncidence
     },
+    incidentExistsVote: async (_parent: any, { id, stillExists }: any) => {
+      try {
+        const incidence = await prisma.incidence.findUnique({ where: { id } });
+        if (!incidence) return new Error('Incidence not found');
+        let vote = stillExists ? 1 : -1;
+        const updatedIncidence = await prisma.incidence.update({
+          where: { id },
+          data: {
+            existsVotes: incidence.existsVotes + vote
+          },
+        })
+        return updatedIncidence
+      } catch (error: any) {
+        console.error(error);
+      }
+    },
+  },
 };
