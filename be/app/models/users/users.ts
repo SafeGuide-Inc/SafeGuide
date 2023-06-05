@@ -13,6 +13,8 @@ export const typeDefs = `#graphql
     phoneNumber: String
     organizationId: String
     status: String
+    id: String
+    supabaseId: String
     updatedAt: DateTime
   }
   type Query {
@@ -20,7 +22,7 @@ export const typeDefs = `#graphql
     getAllUsers: [User]
   }
   type Mutation {
-    createUser(firstName: String!, lastName: String!, email: String!, phoneNumber: String!, organizationId: String!, status: String!): User!
+    createUser(firstName: String!, lastName: String!, email: String!, phoneNumber: String!, organizationId: String!, status: String!, supabaseId: String!): User!
   }
 
 `;
@@ -36,11 +38,11 @@ export const resolvers = {
         },
     },
     Mutation: {
-        createUser: async (_parent: any, { firstName, lastName, email, phoneNumber, organizationId, status }: any) => {
+        createUser: async (_parent: any, { firstName, lastName, email, phoneNumber, organizationId, status, supabaseId }: any) => {
             try {
                 const newUser = await prisma.user.create({
                     data: {
-                        id: uuidv4(),
+                        id: supabaseId,
                         firstName,
                         lastName,
                         email,

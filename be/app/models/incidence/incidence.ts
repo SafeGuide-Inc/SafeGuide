@@ -23,7 +23,7 @@ export const typeDefs = `#graphql
     lat: String
     long: String
     userId: String
-    IncidenceType: IncidenceType
+    incidenceTypeId: String
     existsVotes: Int
     date: DateTime
   }
@@ -36,7 +36,6 @@ export const typeDefs = `#graphql
 
   type Mutation {
    createIncidence(lat: String!, long: String!, userId: String!, incidenceTypeId: String!, date: DateTime!): Incidence!
-   incidentVote(id: ID!, exists: Boolean!): Incidence!
    incidentExistsVote(id: ID!, stillExists: Boolean!): Incidence!
   }
 
@@ -73,38 +72,39 @@ export const resolvers = {
         },
     },
 
-    // Mutation: {
-    //     createIncidence: async (_parent: any, { lat, long, userId, incidenceTypeId, date }: any) => {
-    //         try {
-    //             const newIncidence = await prisma.incidence.create({
-    //                 data: {
-    //                     lat,
-    //                     long,
-    //                     userId,
-    //                     incidenceTypeId,
-    //                     date,
-    //                 },
-    //             })
-    //             return newIncidence
-    //         } catch (error: any) {
-    //             console.error(error);
-    //         }
-    //     },
-    //     incidentExistsVote: async (_parent: any, { id, stillExists }: any) => {
-    //         try {
-    //             const incidence = await prisma.incidence.findUnique({ where: { id } });
-    //             if (!incidence) return new Error('Incidence not found');
-    //             let vote = stillExists ? 1 : -1;
-    //             const updatedIncidence = await prisma.incidence.update({
-    //                 where: { id },
-    //                 data: {
-    //                     existsVotes: incidence.existsVotes + vote
-    //                 },
-    //             })
-    //             return updatedIncidence
-    //         } catch (error: any) {
-    //             console.error(error);
-    //         }
-    //     },
-    // },
+    Mutation: {
+        createIncidence: async (_parent: any, { lat, long, userId, incidenceTypeId, date }: any) => {
+          let newIncidence;
+            try {
+                newIncidence = await prisma.incidence.create({
+                    data: {
+                        lat,
+                        long,
+                        userId,
+                        incidenceTypeId,
+                        date,
+                    },
+                })
+            } catch (error: any) {
+                console.error(error);
+            }
+            return newIncidence
+        },
+        incidentExistsVote: async (_parent: any, { id, stillExists }: any) => {
+            try {
+                const incidence = await prisma.incidence.findUnique({ where: { id } });
+                if (!incidence) return new Error('Incidence not found');
+                let vote = stillExists ? 1 : -1;
+                const updatedIncidence = await prisma.incidence.update({
+                    where: { id },
+                    data: {
+                        existsVotes: incidence.existsVotes + vote
+                    },
+                })
+                return updatedIncidence
+            } catch (error: any) {
+                console.error(error);
+            }
+        },
+    },
 };

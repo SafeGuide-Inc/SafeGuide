@@ -86,8 +86,8 @@ model organization {
 
 model incidence {
   id          String @id @default(uuid())
-  lat         Float
-  long        Float
+  lat         String
+  long        String
   userId      String
   user        user   @relation(fields: [userId], references: [id])
   existsVotes Int    @default(0) @map("exists_votes") // Ranks the amount of votes an incidence has

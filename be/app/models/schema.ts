@@ -4,11 +4,11 @@ import * as incidenceSchema from './incidence/incidence.js'
 
 export const schema = makeExecutableSchema({
   typeDefs: [
-      userSchema.typeDefs,
-      incidenceSchema.typeDefs,
+    userSchema.typeDefs,
+    incidenceSchema.typeDefs,
   ],
-  resolvers: {
-      ...userSchema.resolvers,
-      ...incidenceSchema.resolvers,
-  }
+  resolvers: [
+    userSchema.resolvers,
+    incidenceSchema.resolvers,
+  ]
 })

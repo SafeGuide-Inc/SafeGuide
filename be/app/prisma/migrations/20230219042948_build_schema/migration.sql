@@ -67,8 +67,8 @@ CREATE TABLE "organization" (
 -- CreateTable
 CREATE TABLE "incidence" (
     "id" TEXT NOT NULL,
-    "lat" DOUBLE PRECISION NOT NULL,
-    "long" DOUBLE PRECISION NOT NULL,
+    "lat" TEXT NOT NULL,
+    "long" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "incidence_type_id" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
