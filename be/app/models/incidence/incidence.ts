@@ -23,7 +23,7 @@ export const typeDefs = `#graphql
     lat: String
     long: String
     userId: String
-    incidenceTypeId: String
+    incidenceType: IncidenceType
     existsVotes: Int
     date: DateTime
   }
@@ -45,7 +45,7 @@ export const typeDefs = `#graphql
 export const resolvers = {
   Query: {
     getIncidence: async (_parent: any, { id }: any) => {
-      return prisma.incidence.findUnique({
+      return await prisma.incidence.findUnique({
         include: {
           incidenceType: true,
         },
@@ -53,10 +53,14 @@ export const resolvers = {
       });
     },
     getIncidenceTypeList: async (_parent: any) => {
-      return prisma.incidenceType.findMany();
+      return await prisma.incidenceType.findMany();
     },
     getAllIncidences: async (_parent: any) => {
-      return prisma.incidence.findMany();
+      return await prisma.incidence.findMany(
+        {
+          include: { incidenceType: true }
+        }
+      );
     },
     getIncidencesWithinRangeInMiles: async (_: any, { radiusInMeters, center }: { radiusInMeters: number; center: Point }): Promise<incidence[]> => {
       const { lat, long } = center;
