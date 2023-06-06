@@ -3,6 +3,7 @@ import 'package:flutter/services.dart' hide TextInput;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:lottie/lottie.dart';
+import 'package:safeguide/api/supabase.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../components/buttons.dart';
@@ -16,6 +17,21 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  String email = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      final Map<String, dynamic> arguments =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      setState(() {
+        email = arguments['email'] as String;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,10 +62,10 @@ class _LoginState extends State<Login> {
             xs: 12,
             sm: 12,
             md: 6,
-            child: const LimitedBox(
+            child: LimitedBox(
                 maxHeight: double.infinity,
                 maxWidth: double.infinity,
-                child: LoginContainer()),
+                child: LoginContainer(email: email)),
           ),
           ResponsiveGridCol(
               xs: 0,
@@ -73,7 +89,12 @@ class _LoginState extends State<Login> {
 }
 
 class LoginContainer extends StatefulWidget {
-  const LoginContainer({super.key});
+  const LoginContainer({
+    super.key,
+    required this.email,
+  });
+
+  final String email;
 
   @override
   State<LoginContainer> createState() => _LoginContainerState();
@@ -81,6 +102,8 @@ class LoginContainer extends StatefulWidget {
 
 class _LoginContainerState extends State<LoginContainer> {
   TextEditingController _codeController = TextEditingController();
+  var _code = '';
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -117,18 +140,26 @@ class _LoginContainerState extends State<LoginContainer> {
           CodeInput(
             controller: _codeController,
             onSubmitted: (code) {
-              print('Code entered: $code');
+              setState(() {
+                _code = code;
+              });
             },
           ),
           const SizedBox(
             height: 30,
           ),
           Button(
-              isLoading: false,
+              isLoading: _isLoading,
               title: 'Continue',
               onPressed: () => {
-                    HapticFeedback.lightImpact(),
-                    Navigator.pushNamed(context, '/home')
+                    if (_code.length == 6) print(_code),
+                    {
+                      setState(() {
+                        _isLoading = true;
+                      }),
+                      HapticFeedback.lightImpact(),
+                      validateAccess(widget.email, _code, context)
+                    }
                   }),
           const SizedBox(height: 70),
           Text('Problems login in your account?',
