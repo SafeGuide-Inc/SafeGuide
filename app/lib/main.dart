@@ -82,8 +82,7 @@ class _MainState extends State<Main> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final User? user = supabase.auth.currentUser;
-      if (user != null) {
+      if (loggedUser != null) {
         Navigator.pushNamed(context, '/home');
       } else {
         Navigator.pushNamed(context, '/loginHome');

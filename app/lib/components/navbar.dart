@@ -70,9 +70,11 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                 },
               ),
             ),
-            NotificationButton(
-              notificationCount: 2,
+            IconButton(
+              icon: FaIcon(FontAwesomeIcons.buildingColumns,
+                  color: widget.index == 2 ? Colors.red : Colors.black),
               onPressed: () {
+                HapticFeedback.lightImpact();
                 widget.viewChangeFunction(2);
               },
             ),

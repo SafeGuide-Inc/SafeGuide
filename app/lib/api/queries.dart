@@ -8,3 +8,22 @@ const String getIncidenceTypeList = '''
         }
       }
     ''';
+
+const String getAllIncidencesQuery = r'''
+    query GetAllIncidences {
+      getAllIncidences {
+        date
+        existsVotes
+        id
+        lat
+        long
+        userId
+        incidenceType {
+          category
+          description
+          id
+          name
+        }
+      }
+    }
+  ''';

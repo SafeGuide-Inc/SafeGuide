@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:safeguide/api/queries.dart';
+import 'package:safeguide/const/utils.dart';
 import 'package:safeguide/screens/home/incidentScreen.dart';
 import 'package:sizer/sizer.dart';
 
@@ -14,33 +17,6 @@ class FeedView extends StatefulWidget {
 
 class _FeedViewState extends State<FeedView> {
   Future<String> _locationData = Future.value('Getting current location...');
-
-  List<Map<String, dynamic>> cards = [
-    {
-      'icon': FontAwesomeIcons.mask,
-      'title': 'Theft',
-      'date': '01/18/2021 12:00 PM',
-      'text':
-          'An individual or individuals unlawfully took possession of property that did not belong to them',
-      'latLng': LatLng(44.0463209, -123.077315),
-    },
-    {
-      'icon': FontAwesomeIcons.pills,
-      'title': 'Drug Activity',
-      'date': '01/18/2021 12:00 PM',
-      'text': 'Lorem Ipsun Dolor Sit Amet',
-      'latLng': LatLng(44.0563209, -123.077315),
-    },
-    {
-      'icon': FontAwesomeIcons.gun,
-      'title': 'Sketchy Person',
-      'date': '01/18/2021 12:00 PM',
-      'text': 'Lorem Ipsun Dolor Sit Amet',
-      'latLng': LatLng(44.0463209, -123.087315),
-    },
-  ];
-
-  final List<Widget> _incidentCards = <Widget>[];
 
   Future<void> _getCurrentLocation() async {
     try {
@@ -89,72 +65,8 @@ class _FeedViewState extends State<FeedView> {
   void initState() {
     super.initState();
     _getCurrentLocation();
-
-    // Create the incident cards.
-    Future.wait(cards.map((card) async {
-      final incidentName = card['title'];
-      final incidentIcon = card['icon'];
-      final date = card['date'];
-      final text = card['text'];
-      final source = 'Unknown';
-      final latLng = card['latLng'];
-
-      final locationData = await _getLocationData(latLng);
-
-      return GestureDetector(
-        onTap: () {
-          HapticFeedback.lightImpact();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => IncidentDetailsScreen(
-                title: incidentName,
-                icon: incidentIcon,
-                date: date,
-                location: locationData,
-                text: text,
-                source: source,
-                latLng: latLng,
-              ),
-            ),
-          );
-        },
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 20),
-          child: Card(
-            child: ListTile(
-              leading: Icon(incidentIcon, color: Colors.red, size: 30),
-              title: Text(
-                incidentName,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 4),
-                  Text(locationData ?? '', style: TextStyle(fontSize: 12)),
-                  const SizedBox(height: 4),
-                  Text(date,
-                      style: TextStyle(color: Colors.grey, fontSize: 10)),
-                  const SizedBox(height: 4),
-                  Text(text, style: TextStyle(fontSize: 14, height: 1.2)),
-                  const SizedBox(height: 4),
-                  Text('Source: $source',
-                      style:
-                          TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 4),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-    })).then((cards) {
-      setState(() {
-        _incidentCards.addAll(cards);
-      });
-    });
   }
+  // Create the incident cards.
 
   @override
   Widget build(BuildContext context) {
@@ -195,8 +107,102 @@ class _FeedViewState extends State<FeedView> {
         ),
         centerTitle: true,
       ),
-      body: ListView(
-        children: _incidentCards,
+      body: Query(
+        options: QueryOptions(
+          document: gql(getAllIncidencesQuery),
+        ),
+        builder: (QueryResult result,
+            {VoidCallback? refetch, FetchMore? fetchMore}) {
+          if (result.hasException) {
+            return Text(result.exception.toString());
+          }
+
+          if (result.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          List incidents = result.data!['getAllIncidences'];
+
+          return RefreshIndicator(
+              onRefresh: () async {
+                refetch!();
+              },
+              child: ListView.builder(
+                itemCount: incidents.length,
+                itemBuilder: (context, index) {
+                  final incident = incidents[index];
+                  final incidentName = incident['incidenceType']['name'];
+                  final incidentIcon = getIconForIncident(incidentName);
+                  final date = incident['date'];
+                  final text = incident['incidenceType']['description'];
+                  final source = 'Unknown';
+                  final latLng = LatLng(double.parse(incident['lat']),
+                      double.parse(incident['long']));
+
+                  return FutureBuilder<String>(
+                    future: _getLocationData(latLng),
+                    builder: (context, snapshot) {
+                      String locationData = snapshot.data ?? '';
+                      return GestureDetector(
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => IncidentDetailsScreen(
+                                title: incidentName,
+                                icon: incidentIcon,
+                                date: date,
+                                location: locationData,
+                                text: text,
+                                source: source,
+                                latLng: latLng,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 20),
+                          child: Card(
+                            child: ListTile(
+                              leading: Icon(incidentIcon,
+                                  color: Colors.red, size: 30),
+                              title: Text(
+                                incidentName,
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 4),
+                                  Text(locationData,
+                                      style: TextStyle(fontSize: 12)),
+                                  const SizedBox(height: 4),
+                                  Text(date,
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 10)),
+                                  const SizedBox(height: 4),
+                                  Text(text,
+                                      style:
+                                          TextStyle(fontSize: 14, height: 1.2)),
+                                  const SizedBox(height: 4),
+                                  Text('Source: $source',
+                                      style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 4),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ));
+        },
       ),
     );
   }
