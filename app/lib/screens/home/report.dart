@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:safeguide/api/consts.dart';
+import 'package:safeguide/api/mutations.dart';
 import 'package:safeguide/api/queries.dart';
 import 'package:safeguide/components/cards.dart';
 import 'package:safeguide/const/types.dart';
@@ -63,18 +65,19 @@ class _ReportIncidentState extends State<ReportIncident> {
     }
   }
 
-  void _onSubmitPressed() {
-    if (_selectedIncident != null && _markers.isNotEmpty) {
-      HapticFeedback.heavyImpact();
-      print('Incident Type: ${_selectedIncident!.name}');
-      print('Latitude: ${_markers.first.position.latitude}');
-      print('Longitude: ${_markers.first.position.longitude}');
-      print('Incident Id: ${_selectedIncident!.id}');
-      print('Current DateTime: ${DateTime.now().toUtc()}');
+  void submitForm(RunMutation runMutation) {
+    print(_markers.first.position.latitude);
+    print(_markers.first.position.longitude);
+    print(_selectedIncident!.id);
+    print(DateTime.now().toUtc());
 
-      Navigator.pop(context);
-      Navigator.pushNamed(context, '/reportSuccess');
-    }
+    runMutation({
+      "lat": _markers.first.position.latitude.toString(),
+      "long": _markers.first.position.longitude.toString(),
+      "userId": "1235",
+      "incidenceTypeId": _selectedIncident!.id.toString(),
+      "date": DateTime.now().toUtc().toIso8601String()
+    });
   }
 
   void _fetchIncidents() async {
@@ -126,45 +129,65 @@ class _ReportIncidentState extends State<ReportIncident> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon(Icons.chevron_left, color: Colors.black, size: 35),
-          onPressed: () {
-            HapticFeedback.lightImpact();
-            Navigator.pop(context);
-          },
-        ),
-        title: Text(
-          'Report incident',
-          style: GoogleFonts.roboto(
-            textStyle: const TextStyle(
-              color: Colors.black,
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
+    return Mutation(
+      options: MutationOptions(
+        document: gql(createIncident),
+        update: (GraphQLDataProxy cache, QueryResult? result) async {},
+        onError: (OperationException? error) async {
+          print("Error ");
+          print(error);
+        },
+        onCompleted: (dynamic resultData) {
+          print("Completed");
+          print(resultData);
+          Navigator.pop(context);
+          Navigator.pushNamed(context, '/reportSuccess');
+        },
+      ),
+      builder: (RunMutation runMutation, QueryResult? result) {
+        return Scaffold(
+          extendBody: true,
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: Colors.white,
+            automaticallyImplyLeading: false,
+            leading: IconButton(
+              icon:
+                  const Icon(Icons.chevron_left, color: Colors.black, size: 35),
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                Navigator.pop(context);
+              },
+            ),
+            title: Text(
+              'Report incident',
+              style: GoogleFonts.roboto(
+                textStyle: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
           ),
-        ),
-      ),
-      body: _selectedIncident == null
-          ? IncidentLister(
-              incidentsData: _incidents,
-              selectIncident: _selectIncident,
-            )
-          : IncidentMarker(
-              selectedIncident: _selectedIncident!,
-              deselectIncident: _deselectIncident,
-              currentLocation: _currentLocation,
-              onMapCreated: _onMapCreated,
-              onMapTapped: _onMapTapped,
-              markers: _markers,
-              submitIncident: _onSubmitPressed,
-            ),
+          body: _selectedIncident == null
+              ? IncidentLister(
+                  incidentsData: _incidents,
+                  selectIncident: _selectIncident,
+                )
+              : IncidentMarker(
+                  selectedIncident: _selectedIncident!,
+                  deselectIncident: _deselectIncident,
+                  currentLocation: _currentLocation,
+                  onMapCreated: _onMapCreated,
+                  onMapTapped: _onMapTapped,
+                  markers: _markers,
+                  submitIncident: submitForm,
+                  mutation: runMutation,
+                ),
+        );
+      },
     );
   }
 }
@@ -274,7 +297,8 @@ class IncidentMarker extends StatefulWidget {
       required this.onMapTapped,
       required this.selectedIncident,
       required this.deselectIncident,
-      required this.submitIncident});
+      required this.submitIncident,
+      required this.mutation});
   final currentLocation;
   final markers;
   final onMapCreated;
@@ -282,6 +306,7 @@ class IncidentMarker extends StatefulWidget {
   final selectedIncident;
   final deselectIncident;
   final submitIncident;
+  final mutation;
   @override
   State<IncidentMarker> createState() => _IncidentMarkerState();
 }
@@ -365,7 +390,7 @@ class _IncidentMarkerState extends State<IncidentMarker> {
             child: Center(
               child: Button(
                 onPressed: () {
-                  widget.submitIncident();
+                  widget.submitIncident(widget.mutation);
                 },
                 title: 'Submit report',
               ),

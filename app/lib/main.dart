@@ -25,7 +25,7 @@ void main() async {
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjbXR3eGR2c3VsbHdzZnB6aGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjkxNjU0MzMsImV4cCI6MTk4NDc0MTQzM30.vRghy38_90SkkOP-6LL5LicsFI-ehf_gp6oSMIBxmYQ');
 
   final HttpLink httpLink = HttpLink(
-    'https://localhost:4000/graphql',
+    'http://192.168.0.197:4000/graphql',
   );
 
   final ValueNotifier<GraphQLClient> client = ValueNotifier(
