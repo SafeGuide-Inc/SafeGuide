@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:safeguide/api/supabase.dart';
 import 'package:safeguide/components/successReport.dart';
 import 'package:safeguide/screens/home/report.dart';
 import 'package:safeguide/screens/profile/account.dart';
 import 'package:safeguide/screens/profile/notifications.dart';
+import 'package:safeguide/screens/profile/sessionclose.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -54,12 +56,13 @@ void main() async {
             '/loginHome': (context) => const LoginHome(),
             '/login': (context) => const Login(),
             '/activation': (context) => const Activation(),
-            '/signup': (context) => SignUp(),
+            '/signup': (context) => const SignUp(),
             '/home': (context) => const Home(),
             '/report': (context) => ReportIncident(),
             '/reportSuccess': (context) => SuccessScreen(),
             '/userAccount': (context) => const UserAccount(),
             '/notifications': (context) => UserNotifications(),
+            '/closeSession': (context) => const SessionClose(),
           },
         ),
       );
@@ -79,7 +82,12 @@ class _MainState extends State<Main> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Navigator.pushNamed(context, '/loginHome');
+      final User? user = supabase.auth.currentUser;
+      if (user != null) {
+        Navigator.pushNamed(context, '/home');
+      } else {
+        Navigator.pushNamed(context, '/loginHome');
+      }
     });
   }
 

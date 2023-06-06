@@ -3,6 +3,7 @@ import 'package:flutter/services.dart' hide TextInput;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:lottie/lottie.dart';
+import 'package:safeguide/api/supabase.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../components/buttons.dart';
@@ -61,6 +62,8 @@ class LoginContainer extends StatefulWidget {
 }
 
 class _LoginContainerState extends State<LoginContainer> {
+  TextEditingController _emailController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -93,7 +96,7 @@ class _LoginContainerState extends State<LoginContainer> {
           SizedBox(
             height: 7.h,
           ),
-          const TextInput(label: 'Email'),
+          TextInput(label: 'Email', controller: _emailController),
           const SizedBox(
             height: 10,
           ),
@@ -102,7 +105,7 @@ class _LoginContainerState extends State<LoginContainer> {
               title: 'Login',
               onPressed: (() => {
                     HapticFeedback.lightImpact(),
-                    Navigator.pushNamed(context, '/login')
+                    authUser(_emailController.text, context)
                   })),
           const Spacer(),
           Text('Don’t you have an account?',

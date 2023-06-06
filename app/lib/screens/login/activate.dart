@@ -4,6 +4,7 @@ import 'package:flutter/services.dart' hide TextInput;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:lottie/lottie.dart';
+import 'package:safeguide/api/supabase.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -11,7 +12,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../components/buttons.dart';
 import '../../components/inputs.dart';
 
-final supabase = Supabase.instance.client;
 final storage = FlutterSecureStorage();
 
 class Activation extends StatefulWidget {
