@@ -22,11 +22,12 @@ class ReportIncident extends StatefulWidget {
 }
 
 class _ReportIncidentState extends State<ReportIncident> {
+  String? _selectedCategory;
+  Incident? _selectedIncident;
   Completer<GoogleMapController> _controller = Completer();
   Set<Marker> _markers = {};
   late Future<LatLng> _currentLocation;
   List<Incident> _incidents = [];
-  Incident? _selectedIncident;
 
   late var _idUser = "";
 
@@ -117,11 +118,12 @@ class _ReportIncidentState extends State<ReportIncident> {
     setState(() {
       _incidents = incidentsData.map((incidentData) {
         return Incident(
-            incidentData['name'],
-            getIconForIncident(incidentData['name']),
-            incidentData['id'],
-            incidentData['description'],
-            incidentData['category']);
+          incidentData['name'],
+          getIconForIncident(incidentData['name']),
+          incidentData['id'],
+          incidentData['description'],
+          incidentData['category'],
+        );
       }).toList();
     });
   }
@@ -185,10 +187,31 @@ class _ReportIncidentState extends State<ReportIncident> {
             ),
           ),
           body: _selectedIncident == null
-              ? IncidentLister(
-                  incidentsData: _incidents,
-                  selectIncident: _selectIncident,
-                )
+              ? _selectedCategory == null
+                  ? CategoryLister(
+                      categoriesData: _incidents
+                          .map((incident) => incident.category)
+                          .toSet()
+                          .toList(),
+                      selectCategory: (String category) {
+                        setState(() {
+                          _selectedCategory = category;
+                        });
+                        print(_selectedCategory);
+                      },
+                    )
+                  : IncidentLister(
+                      incidentsData: _incidents
+                          .where((incident) =>
+                              incident.category == _selectedCategory)
+                          .toList(),
+                      selectIncident: _selectIncident,
+                      deselectCategory: () {
+                        setState(() {
+                          _selectedCategory = null;
+                        });
+                      },
+                    )
               : IncidentMarker(
                   selectedIncident: _selectedIncident!,
                   deselectIncident: _deselectIncident,
@@ -207,10 +230,15 @@ class _ReportIncidentState extends State<ReportIncident> {
 
 class IncidentLister extends StatefulWidget {
   const IncidentLister(
-      {super.key, required this.incidentsData, required this.selectIncident});
+      {super.key,
+      required this.incidentsData,
+      required this.selectIncident,
+      required this.deselectCategory // And this});
+      });
 
   final List incidentsData;
   final selectIncident;
+  final Function deselectCategory;
 
   @override
   State<IncidentLister> createState() => _IncidentListerState();
@@ -230,25 +258,12 @@ class _IncidentListerState extends State<IncidentLister> {
         bottom: false,
         child: Column(
           children: [
-            Container(
-              color: Colors.white,
-              margin: EdgeInsets.symmetric(horizontal: 3.w, vertical: 2.h),
-              height: 5.h,
-              child: TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(
-                      color: Colors.black,
-                      width: 2.0,
-                    ),
-                  ),
-                  hintText: 'Search',
-                  prefixIcon: const Icon(Icons.search),
-                  contentPadding: const EdgeInsets.symmetric(
-                      vertical: 10.0), // Adjust the padding as needed
-                ),
-              ),
+            ElevatedButton(
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                widget.deselectCategory();
+              },
+              child: Text("Back to categories"),
             ),
             Expanded(
               child: Container(
@@ -303,6 +318,34 @@ class _IncidentListerState extends State<IncidentLister> {
             ),
           ],
         ));
+  }
+}
+
+class CategoryLister extends StatefulWidget {
+  final List<String> categoriesData;
+  final Function(String) selectCategory;
+
+  CategoryLister({
+    required this.categoriesData,
+    required this.selectCategory,
+  });
+
+  @override
+  _CategoryListerState createState() => _CategoryListerState();
+}
+
+class _CategoryListerState extends State<CategoryLister> {
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: widget.categoriesData.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(widget.categoriesData[index]),
+          onTap: () => widget.selectCategory(widget.categoriesData[index]),
+        );
+      },
+    );
   }
 }
 

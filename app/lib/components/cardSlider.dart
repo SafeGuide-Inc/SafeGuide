@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' hide TextInput;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:safeguide/const/utils.dart';
 import 'package:sizer/sizer.dart';
 
 class CardSlider extends StatefulWidget {
@@ -88,7 +89,8 @@ class _CardSliderState extends State<CardSlider> {
                                             ),
                                             const SizedBox(height: 1),
                                             Text(
-                                              widget.cards[index]['date'],
+                                              convertToLocalTime(
+                                                  widget.cards[index]['date']),
                                               style: const TextStyle(
                                                 fontSize: 10,
                                                 fontWeight: FontWeight.normal,

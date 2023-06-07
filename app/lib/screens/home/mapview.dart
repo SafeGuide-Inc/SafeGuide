@@ -49,9 +49,9 @@ class _MapViewState extends State<MapView> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Location Permission Required'),
-          content: SingleChildScrollView(
+          content: const SingleChildScrollView(
             child: ListBody(
-              children: const <Widget>[
+              children: <Widget>[
                 Text('This app requires location permission to function.'),
                 Text('Please grant location permission in the app settings.'),
               ],

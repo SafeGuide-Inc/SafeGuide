@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:safeguide/const/utils.dart';
 import 'package:sizer/sizer.dart';
 
 class IncidentDetailsScreen extends StatefulWidget {
@@ -97,7 +98,8 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                     const SizedBox(height: 5),
                     Text(widget.location, style: TextStyle(fontSize: 16)),
                     const SizedBox(height: 5),
-                    Text(widget.date, style: TextStyle(color: Colors.grey)),
+                    Text(convertToLocalTime(widget.date),
+                        style: TextStyle(color: Colors.grey)),
                     const SizedBox(height: 10),
                     Flexible(
                       child: Text(
