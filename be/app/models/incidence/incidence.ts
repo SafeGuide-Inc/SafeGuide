@@ -23,6 +23,7 @@ export const typeDefs = `#graphql
     lat: String
     long: String
     userId: String
+    incidenceTypeId: String
     incidenceType: IncidenceType
     existsVotes: Int
     date: DateTime
@@ -41,7 +42,6 @@ export const typeDefs = `#graphql
   }
 
 `;
-
 export const resolvers = {
   Query: {
     getIncidence: async (_parent: any, { id }: any) => {
