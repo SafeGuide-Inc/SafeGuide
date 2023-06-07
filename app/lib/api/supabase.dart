@@ -39,3 +39,8 @@ Future<void> validateAccess(
 Future<void> storeUserId(String userId) async {
   await storage.write(key: 'userId', value: userId);
 }
+
+Future<String?> getCurrentUser() async {
+  User? user = supabase.auth.currentUser;
+  return user?.id;
+}

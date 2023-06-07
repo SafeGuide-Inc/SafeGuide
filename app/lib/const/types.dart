@@ -5,6 +5,7 @@ class Incident {
   final IconData icon;
   final String id;
   final String description;
+  final String category;
 
-  Incident(this.name, this.icon, this.id, this.description);
+  Incident(this.name, this.icon, this.id, this.description, this.category);
 }

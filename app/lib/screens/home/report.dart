@@ -27,11 +27,21 @@ class _ReportIncidentState extends State<ReportIncident> {
   late Future<LatLng> _currentLocation;
   List<Incident> _incidents = [];
   Incident? _selectedIncident;
-  final _idUser = loggedUser!.id;
+
+  late var _idUser = "";
+
+  Future<void> setUserId() async {
+    var id = await getCurrentUser();
+    setState(() {
+      _idUser = id!;
+      print(_idUser);
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    setUserId();
     _currentLocation = _getCurrentLocation();
     _fetchIncidents();
   }
@@ -107,11 +117,11 @@ class _ReportIncidentState extends State<ReportIncident> {
     setState(() {
       _incidents = incidentsData.map((incidentData) {
         return Incident(
-          incidentData['name'],
-          getIconForIncident(incidentData['name']),
-          incidentData['id'],
-          incidentData['description'],
-        );
+            incidentData['name'],
+            getIconForIncident(incidentData['name']),
+            incidentData['id'],
+            incidentData['description'],
+            incidentData['category']);
       }).toList();
     });
   }
@@ -208,6 +218,11 @@ class IncidentLister extends StatefulWidget {
 
 class _IncidentListerState extends State<IncidentLister> {
   final TextEditingController _filterController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
