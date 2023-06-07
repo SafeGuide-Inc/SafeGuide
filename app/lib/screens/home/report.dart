@@ -8,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:safeguide/api/consts.dart';
 import 'package:safeguide/api/mutations.dart';
 import 'package:safeguide/api/queries.dart';
+import 'package:safeguide/api/supabase.dart';
 import 'package:safeguide/components/cards.dart';
 import 'package:safeguide/const/types.dart';
 import 'package:safeguide/const/utils.dart';
@@ -26,6 +27,7 @@ class _ReportIncidentState extends State<ReportIncident> {
   late Future<LatLng> _currentLocation;
   List<Incident> _incidents = [];
   Incident? _selectedIncident;
+  final _idUser = loggedUser!.id;
 
   @override
   void initState() {
@@ -65,16 +67,17 @@ class _ReportIncidentState extends State<ReportIncident> {
     }
   }
 
-  void submitForm(RunMutation runMutation) {
+  void submitForm(RunMutation runMutation) async {
     print(_markers.first.position.latitude);
     print(_markers.first.position.longitude);
     print(_selectedIncident!.id);
     print(DateTime.now().toUtc());
-
+    print(_idUser);
+    HapticFeedback.mediumImpact();
     runMutation({
       "lat": _markers.first.position.latitude.toString(),
       "long": _markers.first.position.longitude.toString(),
-      "userId": "1235",
+      "userId": _idUser,
       "incidenceTypeId": _selectedIncident!.id.toString(),
       "date": DateTime.now().toUtc().toIso8601String()
     });

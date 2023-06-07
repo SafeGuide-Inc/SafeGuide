@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' hide TextInput;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:lottie/lottie.dart';
 import 'package:safeguide/api/mutations.dart';
+import 'package:safeguide/components/buttons.dart';
+import 'package:safeguide/components/inputs.dart';
 import 'package:sizer/sizer.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-
-import '../../components/buttons.dart';
-import '../../components/inputs.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -216,6 +216,7 @@ class _SignUpContainerState extends State<SignUpContainer> {
                     setState(() {
                       _acceptTerms = value;
                     });
+                    HapticFeedback.mediumImpact();
                   },
                 ),
               ),

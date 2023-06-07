@@ -46,7 +46,7 @@ class _SessionCloseState extends State<SessionClose> {
               Container(
                 margin: EdgeInsets.only(top: 5.h),
                 child: Text('See you soon!',
-                    style: GoogleFonts.roboto(
+                    style: GoogleFonts.poppins(
                         fontSize: 25,
                         fontWeight: FontWeight.w400,
                         color: Colors.grey.shade800)),

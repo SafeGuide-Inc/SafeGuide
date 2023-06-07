@@ -7,9 +7,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:safeguide/components/buttons.dart';
 import 'package:safeguide/components/cardSlider.dart';
+import 'package:safeguide/const/utils.dart';
 import 'package:sizer/sizer.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 class MapView extends StatefulWidget {
   const MapView({Key? key}) : super(key: key);
@@ -20,19 +23,15 @@ class MapView extends StatefulWidget {
 
 class _MapViewState extends State<MapView> {
   bool _showDetails = false;
+  List<Map<String, dynamic>> cards = [];
+  List<Marker> _markers = [];
+  bool _didInitializeMarkers = false;
 
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
   static const CameraPosition _kGooglePlex =
       CameraPosition(target: LatLng(44.0463209, -123.077315), zoom: 15.35);
-
-  @override
-  void initState() {
-    super.initState();
-    _requestLocationPermission();
-    _initializeMarkers();
-  }
 
   Future<void> _requestLocationPermission() async {
     PermissionStatus status = await Permission.location.request();
@@ -71,34 +70,48 @@ class _MapViewState extends State<MapView> {
     );
   }
 
-  List<Map<String, dynamic>> cards = [
-    {
-      'icon': FontAwesomeIcons.mask,
-      'title': 'Theft',
-      'date': '01/18/2021 12:00 PM',
-      'text':
-          'An individual or individuals unlawfully took possession of property that did not belong to them',
-      'latLng': LatLng(44.0463209, -123.077315),
-    },
-    {
-      'icon': FontAwesomeIcons.pills,
-      'title': 'Drug Activity',
-      'date': '01/18/2021 12:00 PM',
-      'text': 'Lorem Ipsun Dolor Sit Amet',
-      'latLng': LatLng(44.0563209, -123.077315),
-    },
-    {
-      'icon': FontAwesomeIcons.gun,
-      'title': 'Sketchy Person',
-      'date': '01/18/2021 12:00 PM',
-      'text': 'Lorem Ipsun Dolor Sit Amet',
-      'latLng': LatLng(44.0463209, -123.087315),
-    },
-  ];
+  Future<void> _initializeMarkers() async {
+    final QueryOptions options = QueryOptions(
+      document: gql('''
+        query GetAllIncidences {
+          getAllIncidences {
+            date
+            existsVotes
+            id
+            lat
+            long
+            userId
+            incidenceType {
+              category
+              description
+              id
+              name
+            }
+          }
+        }
+      '''),
+    );
 
-  List<Marker> _markers = [];
+    final GraphQLClient client = GraphQLProvider.of(context).value;
+    final QueryResult result = await client.query(options);
 
-  void _initializeMarkers() {
+    if (result.hasException) {
+      print(result.exception.toString());
+      return;
+    }
+
+    final incidents = result.data?['getAllIncidences'];
+    for (var incident in incidents) {
+      cards.add({
+        'icon': getIconForIncident(incident['incidenceType']['name']),
+        'title': incident['incidenceType']['name'],
+        'date': incident['date'],
+        'text': incident['incidenceType']['description'],
+        'latLng': LatLng(
+            double.parse(incident['lat']), double.parse(incident['long'])),
+      });
+    }
+
     for (int i = 0; i < cards.length; i++) {
       Marker marker = Marker(
         markerId: MarkerId(cards[i]['latLng'].toString()),
@@ -107,6 +120,8 @@ class _MapViewState extends State<MapView> {
       );
       _markers.add(marker);
     }
+
+    setState(() {}); // Update the state after fetching data.
   }
 
   Future<void> _goToCardLocation(LatLng latLng) async {
@@ -116,27 +131,48 @@ class _MapViewState extends State<MapView> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _requestLocationPermission();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_didInitializeMarkers) {
+      _initializeMarkers();
+      _didInitializeMarkers = true;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(children: <Widget>[
-      GoogleMap(
-          myLocationButtonEnabled: false,
-          myLocationEnabled: true,
-          mapType: MapType.normal,
-          initialCameraPosition: _kGooglePlex,
-          markers: Set<Marker>.of(_markers),
-          onMapCreated: (GoogleMapController controller) {
-            _controller.complete(controller);
-          }),
-      Positioned(
-          bottom: 13.h,
-          left: 0,
-          right: 0,
-          child: SizedBox(
+      body: Stack(
+        children: <Widget>[
+          GoogleMap(
+            myLocationButtonEnabled: false,
+            myLocationEnabled: true,
+            mapType: MapType.normal,
+            initialCameraPosition: _kGooglePlex,
+            markers: Set<Marker>.of(_markers),
+            onMapCreated: (GoogleMapController controller) {
+              _controller.complete(controller);
+            },
+          ),
+          Positioned(
+            bottom: 13.h,
+            left: 0,
+            right: 0,
+            child: SizedBox(
               height: 15.h,
-              child: CardSlider(
-                  cards: cards, goToCardLocation: _goToCardLocation))),
-      Positioned(top: 15.h, right: 5.w, child: const EmergencyButton())
-    ]));
+              child:
+                  CardSlider(cards: cards, goToCardLocation: _goToCardLocation),
+            ),
+          ),
+          Positioned(top: 15.h, right: 5.w, child: const EmergencyButton())
+        ],
+      ),
+    );
   }
 }

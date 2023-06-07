@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 
 final supabase = Supabase.instance.client;
+final User? loggedUser = supabase.auth.currentUser;
 
 void authUser(String? email, context) async {
   await supabase.auth
