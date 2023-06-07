@@ -91,6 +91,7 @@ class _FeedViewState extends State<FeedView> {
           title: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              SizedBox(height: 2.h),
               Row(children: [
                 const Icon(Icons.location_pin, color: Colors.red, size: 30),
                 const SizedBox(width: 4),
@@ -119,7 +120,7 @@ class _FeedViewState extends State<FeedView> {
                 ),
                 const SizedBox(width: 20),
               ]),
-              Divider(),
+              const Divider(),
             ],
           ),
           centerTitle: true,
@@ -165,7 +166,7 @@ class _FeedViewState extends State<FeedView> {
                 ],
               ),
             ),
-            Divider(),
+            const Divider(),
             Expanded(
                 child: Container(
                     child: Query(
