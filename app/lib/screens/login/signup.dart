@@ -145,7 +145,7 @@ class _SignUpContainerState extends State<SignUpContainer> {
               ),
               SizedBox(
                   child: Text(
-                      'Some text saying that you need to fill the next form to activate your account and start using Safe Guide.',
+                      'Please fill out the information below to activate your account.',
                       textAlign: TextAlign.left,
                       style: GoogleFonts.lato(
                           fontSize: 20,
@@ -167,7 +167,7 @@ class _SignUpContainerState extends State<SignUpContainer> {
               ),
               Container(
                   alignment: AlignmentDirectional.centerStart,
-                  child: Text(widget.email,
+                  child: Text(widget.email.replaceAll('@gmail.com', '@uoregon.edu'),
                       textAlign: TextAlign.left,
                       style: GoogleFonts.lato(
                           fontSize: 18,

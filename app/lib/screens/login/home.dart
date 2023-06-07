@@ -87,7 +87,7 @@ class _LoginContainerState extends State<LoginContainer> {
           ),
           SizedBox(
               child: Text(
-                  'Provide to students a safer route to their destinations by utilizing modern and innovative technologies.',
+                  'It’s time for a modern solution to student safety.',
                   textAlign: TextAlign.left,
                   style: GoogleFonts.lato(
                       fontSize: 20,
@@ -129,7 +129,7 @@ class _LoginContainerState extends State<LoginContainer> {
                         color: const Color(0xffFF5757)))),
           ),
           const Spacer(),
-          Text('Made with ❤️ by SafeGuide',
+          Text('Made with ❤️ by SafeGuide Inc.',
               textAlign: TextAlign.center,
               style: GoogleFonts.roboto(
                   fontSize: 18,

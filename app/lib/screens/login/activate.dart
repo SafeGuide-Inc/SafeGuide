@@ -8,6 +8,7 @@ import 'package:safeguide/api/supabase.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../components/buttons.dart';
 import '../../components/inputs.dart';
@@ -172,7 +173,7 @@ class _ActivationContainerState extends State<ActivationContainer> {
           ),
           SizedBox(
               child: Text(
-                  'Some text saying that you need to put your university email and the system is going to validate it.',
+                  'Please enter your university email address to sign up for SafeGuide',
                   textAlign: TextAlign.left,
                   style: GoogleFonts.lato(
                       fontSize: 20,
@@ -228,7 +229,7 @@ class _DeniedContainerState extends State<DeniedContainer> {
           ),
           SizedBox(
               child: Text(
-                  'Some text saying that your university is not registered or validate that the domain is correct.',
+                  'Please verify that your domain is entered correctly. If the problem persists, your university may not offer SafeGuide at this time.',
                   textAlign: TextAlign.left,
                   style: GoogleFonts.lato(
                       fontSize: 20,
@@ -251,8 +252,17 @@ class _DeniedContainerState extends State<DeniedContainer> {
                   color: const Color(0xffA6A6A6))),
           const SizedBox(height: 10),
           InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, '/activation');
+            onTap: () async {
+              final Uri emailLaunchUri = Uri(
+                scheme: 'mailto',
+                path: 'help@safeguideinc.com',
+              );
+
+              if (await canLaunchUrl(emailLaunchUri)) {
+                await launchUrl(emailLaunchUri);
+              } else {
+                throw 'Could not launch $emailLaunchUri';
+              };
             },
             child: SizedBox(
                 child: Text('Get help',
@@ -332,7 +342,7 @@ class _ValidateIdentityState extends State<ValidateIdentity> {
           ),
           SizedBox(
               child: Text(
-                  'Some text saying that you must check your email and put the received verification code.',
+                  'Please enter the code received in your email to continue.',
                   textAlign: TextAlign.left,
                   style: GoogleFonts.lato(
                       fontSize: 20,
@@ -369,8 +379,17 @@ class _ValidateIdentityState extends State<ValidateIdentity> {
                   color: const Color(0xffA6A6A6))),
           const SizedBox(height: 10),
           InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, '/activation');
+            onTap: () async {
+              final Uri emailLaunchUri = Uri(
+                scheme: 'mailto',
+                path: 'help@safeguideinc.com',
+              );
+
+              if (await canLaunchUrl(emailLaunchUri)) {
+                await launchUrl(emailLaunchUri);
+              } else {
+                throw 'Could not launch $emailLaunchUri';
+              };
             },
             child: SizedBox(
                 child: Text('Get help',
