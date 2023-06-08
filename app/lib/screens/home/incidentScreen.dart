@@ -35,15 +35,13 @@ class IncidentDetailsScreen extends StatefulWidget {
 class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
   bool _isReported = false;
 
-  BitmapDescriptor customMarker = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
+  BitmapDescriptor customMarker =
+      BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
   BitmapDescriptor defaultMarker = BitmapDescriptor.defaultMarker;
-  
-  @override
 
+  @override
   Widget build(BuildContext context) {
     bool internalReport = widget.internalReport ?? false;
-    print(internalReport);
-    print(widget.internalReport);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white.withOpacity(0.75),
@@ -71,7 +69,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
       ),
       body: Stack(
         children: [
-          Expanded(
+          Positioned.fill(
             child: GoogleMap(
               initialCameraPosition: CameraPosition(
                 target: LatLng(
@@ -79,7 +77,11 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                 zoom: 18,
               ),
               markers: {
-                Marker(position: widget.latLng, markerId: const MarkerId(''), icon: (internalReport) ? defaultMarker  : customMarker),
+                Marker(
+                  position: widget.latLng,
+                  markerId: const MarkerId(''),
+                  icon: (internalReport) ? defaultMarker : customMarker,
+                ),
               },
               myLocationButtonEnabled: false,
             ),
@@ -194,7 +196,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                 ),
               ),
             ),
-          ),
+          )
         ],
       ),
     );

@@ -51,70 +51,68 @@ class IncidentDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Container(
-        margin: EdgeInsets.symmetric(horizontal: 3.w),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10),
-            Container(
-                width: 83.w,
-                margin: const EdgeInsets.only(left: 20, right: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Icon(
-                        incident.icon,
-                        color: Colors.white,
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 3.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10),
+          Container(
+              width: 83.w,
+              margin: const EdgeInsets.only(left: 20, right: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Icon(
+                      incident.icon,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(width: 3.w),
+                  Container(
+                    width: 45.w,
+                    child: Text(
+                      incident.name,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(width: 3.w),
-                    Container(
-                      width: 45.w,
-                      child: Text(
-                        incident.name,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                  ),
+                  SizedBox(width: 3.w),
+                  SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: IconButton(
+                      padding: const EdgeInsets.only(bottom: 10, left: 25),
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        HapticFeedback.mediumImpact();
+                        onBack();
+                      },
                     ),
-                    SizedBox(width: 3.w),
-                    SizedBox(
-                      width: 50,
-                      height: 50,
-                      child: IconButton(
-                        padding: const EdgeInsets.only(bottom: 10, left: 25),
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          HapticFeedback.mediumImpact();
-                          onBack();
-                        },
-                      ),
-                    ),
-                  ],
-                )),
-            const SizedBox(height: 10),
-            Container(
-                margin: const EdgeInsets.only(left: 20, right: 20),
-                child: Text(incident.description)),
-            const SizedBox(height: 25),
-          ],
-        ),
-      )
-    ]);
+                  ),
+                ],
+              )),
+          const SizedBox(height: 10),
+          Container(
+              margin: const EdgeInsets.only(left: 20, right: 20),
+              child: Text(incident.description)),
+          const SizedBox(height: 25),
+        ],
+      ),
+    );
   }
 }

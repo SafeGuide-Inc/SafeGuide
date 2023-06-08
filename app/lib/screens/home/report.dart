@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -50,7 +49,9 @@ class _ReportIncidentState extends State<ReportIncident> {
   Future<LatLng> _getCurrentLocation() async {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    return LatLng(position.latitude, position.longitude);
+    return const LatLng(
+        44.0463209, -123.077315); // This is for testing Eugene Location
+    //return LatLng(position.latitude, position.longitude); This is user real location
   }
 
   void _onMapCreated(GoogleMapController controller) {
@@ -79,11 +80,6 @@ class _ReportIncidentState extends State<ReportIncident> {
   }
 
   void submitForm(RunMutation runMutation) async {
-    print(_markers.first.position.latitude);
-    print(_markers.first.position.longitude);
-    print(_selectedIncident!.id);
-    print(DateTime.now().toUtc());
-    print(_idUser);
     HapticFeedback.mediumImpact();
     runMutation({
       "lat": _markers.first.position.latitude.toString(),
@@ -136,7 +132,6 @@ class _ReportIncidentState extends State<ReportIncident> {
   }
 
   void _deselectIncident() {
-    print('Deselecting incident');
     setState(() {
       _selectedIncident = null;
     });
@@ -424,8 +419,7 @@ class _IncidentMarkerState extends State<IncidentMarker> {
   @override
   Widget build(BuildContext context) {
     return Stack(children: <Widget>[
-      Expanded(
-          child: Container(
+      Positioned.fill(
         child: FutureBuilder<LatLng>(
           future: widget.currentLocation,
           builder: (context, snapshot) {
@@ -450,10 +444,12 @@ class _IncidentMarkerState extends State<IncidentMarker> {
             return Center(child: CircularProgressIndicator());
           },
         ),
-      )),
+      ),
       if (widget.selectedIncident != null)
         Positioned(
-          top: 15.h,
+          top: MediaQuery.of(context).size.height * 0.15, // 15% from the top
+          left: 20,
+          right: 20,
           child: IncidentDetails(
             incident: widget.selectedIncident!,
             onBack: () {

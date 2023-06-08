@@ -102,6 +102,13 @@ class _MapViewState extends State<MapView> with WidgetsBindingObserver {
     }
 
     final incidents = result.data?['getAllIncidences'];
+
+    incidents.sort((a, b) {
+      DateTime dateA = DateTime.parse(a['date']);
+      DateTime dateB = DateTime.parse(b['date']);
+      return dateB.compareTo(dateA); // Change this line to sort by most recent
+    });
+
     for (var incident in incidents) {
       cards.add({
         'icon': getIconForIncident(incident['incidenceType']['name']),
