@@ -84,9 +84,9 @@ class _MainState extends State<Main> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (loggedUser != null) {
-        Navigator.pushNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/home');
       } else {
-        Navigator.pushNamed(context, '/loginHome');
+        Navigator.pushReplacementNamed(context, '/loginHome');
       }
     });
   }
