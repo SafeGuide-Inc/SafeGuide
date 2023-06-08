@@ -177,7 +177,7 @@ class _ReportIncidentState extends State<ReportIncident> {
             ),
             title: Text(
               'Report incident',
-              style: GoogleFonts.roboto(
+              style: GoogleFonts.poppins(
                 textStyle: const TextStyle(
                   color: Colors.black,
                   fontSize: 20,
