@@ -21,7 +21,7 @@ class MapView extends StatefulWidget {
   State<MapView> createState() => _MapViewState();
 }
 
-class _MapViewState extends State<MapView> {
+class _MapViewState extends State<MapView> with WidgetsBindingObserver {
   bool _showDetails = false;
   List<Map<String, dynamic>> cards = [];
   List<Marker> _markers = [];
@@ -118,24 +118,34 @@ class _MapViewState extends State<MapView> {
       Marker marker = Marker(
         markerId: MarkerId(cards[i]['latLng'].toString()),
         position: cards[i]['latLng'],
-        icon: BitmapDescriptor.defaultMarkerWithHue((cards[i]['internalReport']) ? BitmapDescriptor.hueRed : BitmapDescriptor.hueBlue),
+        icon: BitmapDescriptor.defaultMarkerWithHue((cards[i]['internalReport'])
+            ? BitmapDescriptor.hueRed
+            : BitmapDescriptor.hueBlue),
       );
       _markers.add(marker);
     }
 
     setState(() {}); // Update the state after fetching data.
+
+    // Set camera position to the position of the first card if there are cards
+    if (cards.isNotEmpty) {
+      await _goToCardLocation(cards[0]['latLng']);
+    }
   }
 
   Future<void> _goToCardLocation(LatLng latLng) async {
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: latLng, zoom: 15.35)));
+    await controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+          CameraPosition(target: latLng, zoom: 16.5)),
+    );
   }
 
   @override
   void initState() {
     super.initState();
     _requestLocationPermission();
+    WidgetsBinding.instance.addObserver(this); // Add this line
   }
 
   @override
@@ -144,6 +154,20 @@ class _MapViewState extends State<MapView> {
     if (!_didInitializeMarkers) {
       _initializeMarkers();
       _didInitializeMarkers = true;
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this); // Add this line
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _didInitializeMarkers = false; // Reset the flag
+      _initializeMarkers(); // Reload the data
     }
   }
 

@@ -90,7 +90,8 @@ class _ReportIncidentState extends State<ReportIncident> {
       "long": _markers.first.position.longitude.toString(),
       "userId": _idUser,
       "incidenceTypeId": _selectedIncident!.id.toString(),
-      "date": DateTime.now().toUtc().toIso8601String()
+      "date": DateTime.now().toUtc().toIso8601String(),
+      "internalReport": false
     });
   }
 
@@ -118,12 +119,11 @@ class _ReportIncidentState extends State<ReportIncident> {
     setState(() {
       _incidents = incidentsData.map((incidentData) {
         return Incident(
-          incidentData['name'],
-          getIconForIncident(incidentData['name']),
-          incidentData['id'],
-          incidentData['description'],
-          incidentData['category'],
-        );
+            incidentData['name'],
+            getIconForIncident(incidentData['name']),
+            incidentData['id'],
+            incidentData['description'],
+            incidentData['category']);
       }).toList();
     });
   }

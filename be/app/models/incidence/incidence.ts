@@ -57,11 +57,13 @@ export const resolvers = {
       return await prisma.incidenceType.findMany();
     },
     getAllIncidences: async (_parent: any) => {
-      return await prisma.incidence.findMany(
+      const response = await prisma.incidence.findMany(
         {
           include: { incidenceType: true }
         }
       );
+      console.log(response);
+      return response;
     },
     getIncidencesWithinRangeInMiles: async (_: any, { radiusInMeters, center }: { radiusInMeters: number; center: Point }): Promise<incidence[]> => {
       const { lat, long } = center;

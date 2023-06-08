@@ -38,35 +38,9 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: const Color(0xffF5F5F5),
-        body: SafeArea(
-            child: ResponsiveGridRow(children: [
-          ResponsiveGridCol(
-            xs: 12,
-            sm: 12,
-            md: 6,
-            child: LimitedBox(
-                maxHeight: double.infinity,
-                maxWidth: double.infinity,
-                child: SignUpContainer(userId: userId, email: email)),
-          ),
-          ResponsiveGridCol(
-              xs: 0,
-              sm: 0,
-              md: 6,
-              child: Visibility(
-                visible: MediaQuery.of(context).size.width > 600,
-                child: LimitedBox(
-                    maxHeight: double.infinity,
-                    maxWidth: double.infinity,
-                    child: Container(
-                      margin: EdgeInsets.only(top: 15.h),
-                      child: Center(
-                        child: Lottie.network(
-                            'https://assets5.lottiefiles.com/private_files/lf30_p5tali1o.json'),
-                      ),
-                    )),
-              ))
-        ])));
+        body: SingleChildScrollView(
+            child: SafeArea(
+                child: SignUpContainer(userId: userId, email: email))));
   }
 }
 
@@ -167,7 +141,8 @@ class _SignUpContainerState extends State<SignUpContainer> {
               ),
               Container(
                   alignment: AlignmentDirectional.centerStart,
-                  child: Text(widget.email.replaceAll('@gmail.com', '@uoregon.edu'),
+                  child: Text(
+                      widget.email.replaceAll('@gmail.com', '@uoregon.edu'),
                       textAlign: TextAlign.left,
                       style: GoogleFonts.lato(
                           fontSize: 18,

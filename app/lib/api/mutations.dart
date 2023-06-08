@@ -17,9 +17,10 @@ mutation CreateUser($firstName: String!, $lastName: String!, $email: String!, $p
 const String createIncident = r'''
 mutation Mutation($lat: String!, $long: String!, $userId: String!, $incidenceTypeId: String!, $date: DateTime!) {
   createIncidence(lat: $lat, long: $long, userId: $userId, incidenceTypeId: $incidenceTypeId, date: $date) {
-    lat
-    long
+    internalReport
     userId
+    long
+    lat
     incidenceTypeId
     date
   }
