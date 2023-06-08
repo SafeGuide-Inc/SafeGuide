@@ -14,6 +14,7 @@ class IncidentDetailsScreen extends StatefulWidget {
   final String text;
   final String source;
   final LatLng latLng;
+  final bool? internalReport;
 
   const IncidentDetailsScreen({
     Key? key,
@@ -24,6 +25,7 @@ class IncidentDetailsScreen extends StatefulWidget {
     required this.text,
     required this.source,
     required this.latLng,
+    required this.internalReport,
   }) : super(key: key);
 
   @override
@@ -33,8 +35,15 @@ class IncidentDetailsScreen extends StatefulWidget {
 class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
   bool _isReported = false;
 
+  BitmapDescriptor customMarker = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
+  BitmapDescriptor defaultMarker = BitmapDescriptor.defaultMarker;
+  
   @override
+
   Widget build(BuildContext context) {
+    bool internalReport = widget.internalReport ?? false;
+    print(internalReport);
+    print(widget.internalReport);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white.withOpacity(0.75),
@@ -69,9 +78,9 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                     widget.latLng.latitude - 0.0005, widget.latLng.longitude),
                 zoom: 18,
               ),
-              markers: Set.of([
-                Marker(position: widget.latLng, markerId: const MarkerId('')),
-              ]),
+              markers: {
+                Marker(position: widget.latLng, markerId: const MarkerId(''), icon: (internalReport) ? defaultMarker  : customMarker),
+              },
               myLocationButtonEnabled: false,
             ),
           ),

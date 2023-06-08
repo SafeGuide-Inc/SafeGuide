@@ -39,7 +39,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
           children: <Widget>[
             IconButton(
               icon: FaIcon(FontAwesomeIcons.mapLocationDot,
-                  color: widget.index == 0 ? Colors.red : Colors.black),
+                  color: widget.index == 0 ? Colors.red : Colors.black54),
               onPressed: () {
                 HapticFeedback.lightImpact();
                 widget.viewChangeFunction(0);
@@ -47,7 +47,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
             ),
             IconButton(
               icon: FaIcon(FontAwesomeIcons.list,
-                  color: widget.index == 1 ? Colors.red : Colors.black),
+                  color: widget.index == 1 ? Colors.red : Colors.black54),
               onPressed: () {
                 HapticFeedback.lightImpact();
                 widget.viewChangeFunction(1);
@@ -72,7 +72,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
             ),
             IconButton(
               icon: FaIcon(FontAwesomeIcons.buildingColumns,
-                  color: widget.index == 2 ? Colors.red : Colors.black),
+                  color: widget.index == 2 ? Colors.red : Colors.black54),
               onPressed: () {
                 HapticFeedback.lightImpact();
                 widget.viewChangeFunction(2);
@@ -80,7 +80,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
             ),
             IconButton(
               icon: FaIcon(FontAwesomeIcons.user,
-                  color: widget.index == 3 ? Colors.red : Colors.black),
+                  color: widget.index == 3 ? Colors.red : Colors.black54),
               onPressed: () {
                 HapticFeedback.lightImpact();
                 widget.viewChangeFunction(3);

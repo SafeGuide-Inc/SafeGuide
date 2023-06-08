@@ -42,9 +42,10 @@ class _FeedViewState extends State<FeedView> {
 
       if (placemarks.isNotEmpty) {
         Placemark placemark = placemarks.first;
+        print(placemark.subLocality.runtimeType);
         setState(() {
           _locationData = Future.value(
-              '${placemark.name}, ${placemark.subLocality}, ${placemark.locality}');
+              (placemark.subLocality != '') ? '${placemark.name}, ${placemark.subLocality}, ${placemark.locality}' : '${placemark.name}, ${placemark.locality}');
         });
       } else {
         setState(() {
@@ -66,7 +67,12 @@ class _FeedViewState extends State<FeedView> {
 
       if (placemarks.isNotEmpty) {
         Placemark placemark = placemarks.first;
-        return '${placemark.name}, ${placemark.subLocality}, ${placemark.locality}';
+        if (placemark.subLocality == '') {
+          return '${placemark.name}, ${placemark.locality}';
+        } else {
+          return '${placemark.name}, ${placemark.subLocality}, ${placemark.locality}';
+        }
+
       }
 
       return '';
@@ -201,13 +207,13 @@ class _FeedViewState extends State<FeedView> {
                       itemBuilder: (context, index) {
                         final incident = filteredIncidents[index];
                         final incidentName = incident['incidenceType']['name'];
+                        final internalReport = incident['internalReport'];
                         final incidentIcon = getIconForIncident(incidentName);
                         final date = incident['date'];
                         final text = incident['incidenceType']['description'];
-                        final source = 'Unknown';
+                        final source = (incident['internalReport']) ? 'User Reported' : 'External Crime Data';
                         final latLng = LatLng(double.parse(incident['lat']),
                             double.parse(incident['long']));
-
                         return FutureBuilder<String>(
                           future: _getLocationData(latLng),
                           builder: (context, snapshot) {
@@ -226,6 +232,7 @@ class _FeedViewState extends State<FeedView> {
                                       text: text,
                                       source: source,
                                       latLng: latLng,
+                                      internalReport: internalReport,
                                     ),
                                   ),
                                 );
