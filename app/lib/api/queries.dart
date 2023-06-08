@@ -18,6 +18,7 @@ const String getAllIncidencesQuery = r'''
         lat
         long
         userId
+        internalReport
         incidenceType {
           category
           description

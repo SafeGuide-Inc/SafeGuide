@@ -81,6 +81,7 @@ class _MapViewState extends State<MapView> {
             lat
             long
             userId
+            internalReport
             incidenceType {
               category
               description
@@ -109,6 +110,7 @@ class _MapViewState extends State<MapView> {
         'text': incident['incidenceType']['description'],
         'latLng': LatLng(
             double.parse(incident['lat']), double.parse(incident['long'])),
+        'internalReport': incident['internalReport'] ?? false
       });
     }
 
@@ -116,7 +118,7 @@ class _MapViewState extends State<MapView> {
       Marker marker = Marker(
         markerId: MarkerId(cards[i]['latLng'].toString()),
         position: cards[i]['latLng'],
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        icon: BitmapDescriptor.defaultMarkerWithHue((cards[i]['internalReport']) ? BitmapDescriptor.hueRed : BitmapDescriptor.hueBlue),
       );
       _markers.add(marker);
     }
