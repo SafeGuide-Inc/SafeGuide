@@ -135,11 +135,13 @@ class _FeedViewState extends State<FeedView> {
                 children: [
                   GestureDetector(
                     onTap: () {
+                      HapticFeedback.mediumImpact();
                       showModalBottomSheet(
                         context: context,
                         builder: (BuildContext builder) {
                           return Container(
-                            height: 30.h,
+                            width: 70.w,
+                            height: 35.h,
                             child: CupertinoPicker(
                               itemExtent: 30,
                               onSelectedItemChanged: (int index) {

@@ -6,7 +6,7 @@ import 'package:safeguide/screens/home/report.dart';
 import 'package:safeguide/screens/profile/account.dart';
 import 'package:safeguide/screens/profile/notifications.dart';
 import 'package:safeguide/screens/profile/sessionclose.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:sizer/sizer.dart';
@@ -20,6 +20,7 @@ import 'package:safeguide/screens/login/signup.dart';
 import 'package:safeguide/screens/test.dart';
 
 void main() async {
+  await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
       url: 'https://scmtwxdvsullwsfpzhcp.supabase.co',
@@ -27,7 +28,7 @@ void main() async {
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjbXR3eGR2c3VsbHdzZnB6aGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjkxNjU0MzMsImV4cCI6MTk4NDc0MTQzM30.vRghy38_90SkkOP-6LL5LicsFI-ehf_gp6oSMIBxmYQ');
 
   final HttpLink httpLink = HttpLink(
-    'http://192.168.0.197:4000/graphql',
+    dotenv.env['API_URL']!,
   );
 
   final ValueNotifier<GraphQLClient> client = ValueNotifier(
