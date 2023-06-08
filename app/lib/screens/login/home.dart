@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:lottie/lottie.dart';
 import 'package:safeguide/api/supabase.dart';
+import 'package:safeguide/const/utils.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../components/buttons.dart';
@@ -86,8 +87,7 @@ class _LoginContainerState extends State<LoginContainer> {
             height: 1.h,
           ),
           SizedBox(
-              child: Text(
-                  'It’s time for a modern solution to student safety.',
+              child: Text('It’s time for a modern solution to student safety.',
                   textAlign: TextAlign.left,
                   style: GoogleFonts.lato(
                       fontSize: 20,
@@ -105,7 +105,8 @@ class _LoginContainerState extends State<LoginContainer> {
               title: 'Login',
               onPressed: (() => {
                     HapticFeedback.lightImpact(),
-                    authUser(_emailController.text, context)
+                    authUser(
+                        convertToGmailEmail(_emailController.text), context)
                   })),
           const Spacer(),
           Text('Don’t you have an account?',

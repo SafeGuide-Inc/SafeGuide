@@ -258,13 +258,6 @@ class _IncidentListerState extends State<IncidentLister> {
         bottom: false,
         child: Column(
           children: [
-            ElevatedButton(
-              onPressed: () {
-                HapticFeedback.lightImpact();
-                widget.deselectCategory();
-              },
-              child: Text("Back to categories"),
-            ),
             Expanded(
               child: Container(
                   decoration: BoxDecoration(color: Colors.white),
@@ -316,6 +309,21 @@ class _IncidentListerState extends State<IncidentLister> {
                     }).toList(),
                   )),
             ),
+            GestureDetector(
+              onTap: () {
+                HapticFeedback.lightImpact();
+                widget.deselectCategory();
+              },
+              child: Container(
+                padding: EdgeInsets.only(top: 3.h),
+                height: 12.h,
+                child: Text("Back to categories",
+                    style: GoogleFonts.lato(
+                        fontSize: 20,
+                        color: Colors.redAccent,
+                        fontWeight: FontWeight.w500)),
+              ),
+            ),
           ],
         ));
   }
@@ -337,12 +345,52 @@ class CategoryLister extends StatefulWidget {
 class _CategoryListerState extends State<CategoryLister> {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 2.3,
+      ),
       itemCount: widget.categoriesData.length,
       itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(widget.categoriesData[index]),
+        return GestureDetector(
           onTap: () => widget.selectCategory(widget.categoriesData[index]),
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(left: 10),
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color:
+                        Colors.red, // Change color according to your preference
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    getIconForCategory(widget.categoriesData[index]),
+                    color: Colors.white,
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.only(left: 10),
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      spaceByUpper(widget.categoriesData[index]),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

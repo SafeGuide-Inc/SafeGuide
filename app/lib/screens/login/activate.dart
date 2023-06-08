@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:lottie/lottie.dart';
 import 'package:safeguide/api/supabase.dart';
+import 'package:safeguide/const/utils.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -115,24 +116,6 @@ class ActivationContainer extends StatefulWidget {
 class _ActivationContainerState extends State<ActivationContainer> {
   TextEditingController _emailController = TextEditingController();
   String _email = '';
-
-  String convertToGmailEmail(String email) {
-    // Split the email address into username and domain
-    final parts = email.split('@');
-    if (parts.length == 2) {
-      final username = parts[0];
-      final domain = parts[1];
-
-      // Check if the domain is uoregon.edu
-      if (domain == 'uoregon.edu') {
-        // Replace the domain with gmail.com
-        return '$username@gmail.com';
-      }
-    }
-
-    // Return the original email if it doesn't match the uoregon.edu domain
-    return email;
-  }
 
   void createUser(String email) async {
     //await supabase.auth.signOut(); //For test only
@@ -262,7 +245,8 @@ class _DeniedContainerState extends State<DeniedContainer> {
                 await launchUrl(emailLaunchUri);
               } else {
                 throw 'Could not launch $emailLaunchUri';
-              };
+              }
+              ;
             },
             child: SizedBox(
                 child: Text('Get help',
@@ -389,7 +373,8 @@ class _ValidateIdentityState extends State<ValidateIdentity> {
                 await launchUrl(emailLaunchUri);
               } else {
                 throw 'Could not launch $emailLaunchUri';
-              };
+              }
+              ;
             },
             child: SizedBox(
                 child: Text('Get help',
