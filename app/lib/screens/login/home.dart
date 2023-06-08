@@ -87,7 +87,7 @@ class _LoginContainerState extends State<LoginContainer> {
             height: 1.h,
           ),
           SizedBox(
-              child: Text('It’s time for a modern solution to student safety.',
+              child: Text('A modern solution for student safety.',
                   textAlign: TextAlign.left,
                   style: GoogleFonts.lato(
                       fontSize: 20,
@@ -109,7 +109,7 @@ class _LoginContainerState extends State<LoginContainer> {
                         convertToGmailEmail(_emailController.text), context)
                   })),
           const Spacer(),
-          Text('Don’t you have an account?',
+          Text('New to SafeGuide?',
               textAlign: TextAlign.left,
               style: GoogleFonts.lato(
                   fontSize: 18,

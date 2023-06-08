@@ -207,7 +207,7 @@ class _EmergencyButtonState extends State<EmergencyButton> {
     pressCount++;
 
     if (pressCount == 1) {
-      showToast('Press 2 more times to call emergencies');
+      showToast('Press 2 more times to call 911');
       HapticFeedback.mediumImpact();
       // Reset the press count after 2 seconds
       resetTimer = Timer(Duration(seconds: 2), () {
@@ -217,7 +217,7 @@ class _EmergencyButtonState extends State<EmergencyButton> {
       });
     } else if (pressCount == 2) {
       HapticFeedback.heavyImpact();
-      showToast('Press 1 more time to call emergencies');
+      showToast('Press 1 more time to call 911');
 
       // Reset the press count after 2 seconds
       resetTimer?.cancel();

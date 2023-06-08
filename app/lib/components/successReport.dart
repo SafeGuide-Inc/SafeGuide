@@ -62,7 +62,7 @@ class _SuccessScreenState extends State<SuccessScreen>
                 },
               ),
               const Text(
-                'Your report was successfully created, thanks for helping the community!',
+                'Your report was successfully created, thanks for helping your community!',
                 style: TextStyle(fontSize: 18),
                 textAlign: TextAlign.center,
               ),
