@@ -126,7 +126,7 @@ class _ActivationContainerState extends State<ActivationContainer> {
   }
 
   validateEmail() {
-    if (_emailController.text.contains('.edu')) {
+    if (_emailController.text.contains('uoregon.edu')) {
       createUser(convertToGmailEmail(_emailController.text));
     } else {
       widget.stepFunction(2);

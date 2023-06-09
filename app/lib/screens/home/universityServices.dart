@@ -92,8 +92,8 @@ class CustomAppBarContent extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Image.network(
-          "https://cdn.britannica.com/30/197130-050-3D3AD27B/Lillis-Business-Complex-design-installations-one-use.jpg",
+        Image.asset(
+          "assets/images/uoregon.jpg", // Replace with the path to your local asset image
           fit: BoxFit.cover,
         ),
         Container(

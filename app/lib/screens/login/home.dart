@@ -44,10 +44,10 @@ class _LoginHomeState extends State<LoginHome> {
                     maxHeight: double.infinity,
                     maxWidth: double.infinity,
                     child: Container(
-                      margin: EdgeInsets.only(top: 15.h),
+                      margin: EdgeInsets.only(top: 5.h),
                       child: Center(
                         child: Lottie.network(
-                            'https://assets5.lottiefiles.com/private_files/lf30_p5tali1o.json'),
+                            'https://assets9.lottiefiles.com/packages/lf20_b2lc5tdx.json'),
                       ),
                     )),
               ))
