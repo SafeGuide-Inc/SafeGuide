@@ -41,7 +41,7 @@ dependencies:
   responsive_grid: ^2.1.0
   sizer: ^2.0.15
   lottie: ^1.4.3
-  google_maps_flutter: ^2.2.3
+  google_maps_flutter: ^2.3.0
   font_awesome_flutter: ^10.3.0
   graphql_flutter: ^5.1.2
   supabase_flutter: ^1.4.0
@@ -82,6 +82,7 @@ flutter:
      - assets/google.png
      - assets/images/logo.png
      - assets/animations/home.json
+     - assets/images/uoregon.jpg
      - .env
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -1,8 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:responsive_grid/responsive_grid.dart';
-import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../components/buttons.dart';
@@ -50,35 +49,8 @@ class _UserAccountState extends State<UserAccount> {
           ),
         ),
         backgroundColor: const Color(0xffF5F5F5),
-        body: SafeArea(
-            child: ResponsiveGridRow(children: [
-          ResponsiveGridCol(
-            xs: 12,
-            sm: 12,
-            md: 6,
-            child: LimitedBox(
-                maxHeight: double.infinity,
-                maxWidth: double.infinity,
-                child: UserAccountContainer(userId: userId, email: email)),
-          ),
-          ResponsiveGridCol(
-              xs: 0,
-              sm: 0,
-              md: 6,
-              child: Visibility(
-                visible: MediaQuery.of(context).size.width > 600,
-                child: LimitedBox(
-                    maxHeight: double.infinity,
-                    maxWidth: double.infinity,
-                    child: Container(
-                      margin: EdgeInsets.only(top: 15.h),
-                      child: Center(
-                        child: Lottie.network(
-                            'https://assets5.lottiefiles.com/private_files/lf30_p5tali1o.json'),
-                      ),
-                    )),
-              ))
-        ])));
+        body: SingleChildScrollView(
+            child: UserAccountContainer(userId: userId, email: email)));
   }
 }
 
@@ -97,6 +69,43 @@ class UserAccountContainer extends StatefulWidget {
 }
 
 class _UserAccountContainerState extends State<UserAccountContainer> {
+  TextEditingController nameController = TextEditingController(text: "Moises");
+  TextEditingController lastNameController =
+      TextEditingController(text: "Daniel");
+  TextEditingController phoneNumberController =
+      TextEditingController(text: "7757717060");
+
+  void _showDeleteConfirmationDialog(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: const Text('Delete Account'),
+          content: const Text(
+              'Are you sure you want to delete your account? This action cannot be undone.'),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              child: const Text('Cancel'),
+              onPressed: () {
+                HapticFeedback.mediumImpact();
+                Navigator.of(context).pop();
+              },
+            ),
+            CupertinoDialogAction(
+              isDestructiveAction: true,
+              onPressed: () {
+                HapticFeedback.mediumImpact();
+                Navigator.of(context).pop();
+                Navigator.pushNamed(context, '/closeSession');
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -153,16 +162,31 @@ class _UserAccountContainerState extends State<UserAccountContainer> {
                       fontSize: 18,
                       fontWeight: FontWeight.w400,
                       color: Colors.black))),
-          const SafeGuideInputs.TextInput(label: 'Name'),
-          const SafeGuideInputs.TextInput(label: 'Last name'),
-          const SafeGuideInputs.TextInput(label: 'Phone number'),
-          Container(
-            margin: EdgeInsets.only(top: 10.h),
-            child: Button(
-                isLoading: false,
-                title: 'Update Info',
-                onPressed: () => Navigator.pop(context)),
-          )
+          SafeGuideInputs.TextInput(label: 'Name', controller: nameController),
+          SafeGuideInputs.TextInput(
+              label: 'Last name', controller: lastNameController),
+          SafeGuideInputs.TextInput(
+              label: 'Phone number', controller: phoneNumberController),
+          const SizedBox(
+            height: 10,
+          ),
+          Button(
+              isLoading: false,
+              title: 'Update Info',
+              onPressed: () => Navigator.pop(context)),
+          const SizedBox(
+            height: 65,
+          ),
+          GestureDetector(
+              onTap: () {
+                HapticFeedback.mediumImpact();
+                _showDeleteConfirmationDialog(context);
+              },
+              child: Text('Delete Account',
+                  style: GoogleFonts.lato(
+                      fontSize: 18,
+                      color: Colors.red,
+                      fontWeight: FontWeight.w900)))
         ],
       ),
     );

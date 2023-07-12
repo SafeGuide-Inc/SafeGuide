@@ -128,16 +128,24 @@ class _MapViewState extends State<MapView> with WidgetsBindingObserver {
         icon: BitmapDescriptor.defaultMarkerWithHue((cards[i]['internalReport'])
             ? BitmapDescriptor.hueRed
             : BitmapDescriptor.hueBlue),
+        onTap: () {
+          _goToCardLocationByTap(cards[i]['latLng']);
+        },
       );
       _markers.add(marker);
     }
 
-    setState(() {}); // Update the state after fetching data.
-
-    // Set camera position to the position of the first card if there are cards
+    setState(() {});
     if (cards.isNotEmpty) {
       await _goToCardLocation(cards[0]['latLng']);
     }
+  }
+
+  Future<void> _goToCardLocationByTap(LatLng latLng) async {
+    final GoogleMapController controller = await _controller.future;
+    await controller.animateCamera(
+      CameraUpdate.newCameraPosition(CameraPosition(target: latLng, zoom: 18)),
+    );
   }
 
   Future<void> _goToCardLocation(LatLng latLng) async {

@@ -28,7 +28,7 @@ Future<void> validateAccess(
 
   if (user != null) {
     String userId = user.id;
-    await storeUserId(userId).then((value) => Navigator.pushNamed(
+    await storeUserId(userId).then((value) => Navigator.pushReplacementNamed(
         context, '/home',
         arguments: {'userId': userId, 'email': email}));
   } else {
