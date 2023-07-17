@@ -97,7 +97,7 @@ class _SignUpContainerState extends State<SignUpContainer> {
         onCompleted: (dynamic resultData) {
           print("Function completed");
           print(resultData);
-          //Navigator.pushReplacementNamed(context, '/home');
+          Navigator.pushReplacementNamed(context, '/home');
         },
       ),
       builder: (RunMutation runMutation, QueryResult? result) {
