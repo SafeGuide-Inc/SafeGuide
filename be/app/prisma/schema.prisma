@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://postgres:p6SuJ1A09RXzXoKg@db.scmtwxdvsullwsfpzhcp.supabase.co:5432/postgres"
 }
 
 model Log {
@@ -58,7 +58,7 @@ model user {
 model device {
   id          String @id @default(uuid())
   userId      String
-  user        user   @relation(fields: [userId], references: [id])
+  user        user   @relation(fields: [userId], references: [id], onDelete: Cascade)
   deviceToken String
   os          String
 }
@@ -66,7 +66,7 @@ model device {
 model userSettings {
   id     String @id @default(uuid())
   userId String @map("user_id")
-  user   user   @relation(fields: [userId], references: [id])
+  user   user   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_settings")
 }
@@ -89,7 +89,7 @@ model incidence {
   lat         String
   long        String
   userId      String
-  user        user   @relation(fields: [userId], references: [id])
+  user        user   @relation(fields: [userId], references: [id], onDelete: Cascade)
   existsVotes Int    @default(0) @map("exists_votes") // Ranks the amount of votes an incidence has
   incidenceTypeId String        @map("incidence_type_id")
   incidenceType   incidenceType @relation(fields: [incidenceTypeId], references: [id])
@@ -110,7 +110,7 @@ model incidenceType {
 model userReports {
   id              String @id @default(uuid())
   reportingUserId String
-  user            user   @relation(fields: [reportingUserId], references: [id])
+  user            user   @relation(fields: [reportingUserId], references: [id], onDelete: Cascade)
   incidenceId     String
 
   date   DateTime
