@@ -94,6 +94,7 @@ model incidence {
   incidenceTypeId String        @map("incidence_type_id")
   incidenceType   incidenceType @relation(fields: [incidenceTypeId], references: [id])
   internalReport  Boolean       @default(true) @map("internal_report")
+  schoolReport    Boolean       @default(false) @map("school_report")
   date            DateTime
 }
 
