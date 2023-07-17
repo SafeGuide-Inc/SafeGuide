@@ -123,7 +123,7 @@ class _MapViewState extends State<MapView> with WidgetsBindingObserver {
 
     for (int i = 0; i < cards.length; i++) {
       BitmapDescriptor icon;
-      if (cards[i]['schoolReport'] != null) {
+      if (cards[i]['schoolReport'] == true) {
         icon =
             BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow);
       } else {
