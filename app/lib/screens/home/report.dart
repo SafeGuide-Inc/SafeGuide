@@ -67,16 +67,16 @@ class _ReportIncidentState extends State<ReportIncident> {
       position.longitude,
     );
 
-    if (distanceInMeters <= 402.00) {
-      setState(() {
-        HapticFeedback.mediumImpact();
-        _markers.clear();
-        _markers.add(Marker(
-          markerId: MarkerId(position.toString()),
-          position: position,
-        ));
-      });
-    }
+    // if (distanceInMeters <= 402.00) {
+    setState(() {
+      HapticFeedback.mediumImpact();
+      _markers.clear();
+      _markers.add(Marker(
+        markerId: MarkerId(position.toString()),
+        position: position,
+      ));
+    });
+    // }
   }
 
   void submitForm(RunMutation runMutation) async {

@@ -19,15 +19,8 @@ class _UserNotificationsState extends State<UserNotifications> {
     {
       'id': "645345",
       'name': 'Around the campus',
-      'description':
-          'Receive alerts of incidents close to your campus location',
-      'active': false
-    },
-    {
-      'id': "87568",
-      'name': 'Inside the campus',
-      'description': 'Receive alert of incidents inside your campus',
-      'active': false
+      'description': 'Receive alerts of incidents all around the campus',
+      'active': true
     }
   ];
 

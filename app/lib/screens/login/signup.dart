@@ -67,6 +67,9 @@ class _SignUpContainerState extends State<SignUpContainer> {
   void submitForm(RunMutation runMutation) {
     print(_nameController.text);
     if (_acceptTerms) {
+      print(_nameController.text);
+      print(_lastNameController.text);
+      print(widget.userId);
       runMutation({
         "firstName": _nameController.text,
         "lastName": _lastNameController.text,
@@ -88,13 +91,13 @@ class _SignUpContainerState extends State<SignUpContainer> {
         document: gql(createUser),
         update: (GraphQLDataProxy cache, QueryResult? result) async {},
         onError: (OperationException? error) async {
-          print("Error ");
+          print("Error Here");
           print(error);
         },
         onCompleted: (dynamic resultData) {
-          print("Completed");
+          print("Function completed");
           print(resultData);
-          Navigator.pushReplacementNamed(context, '/home');
+          //Navigator.pushReplacementNamed(context, '/home');
         },
       ),
       builder: (RunMutation runMutation, QueryResult? result) {
