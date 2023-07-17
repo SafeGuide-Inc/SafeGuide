@@ -25,6 +25,7 @@ export const typeDefs = `#graphql
     userId: String
     incidenceTypeId: String
     internalReport: Boolean
+    schoolReport: Boolean
     incidenceType: IncidenceType
     existsVotes: Int
     date: DateTime
