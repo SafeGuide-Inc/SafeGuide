@@ -64,5 +64,7 @@
 	<false/>
 	<key>companyName</key>
 	<string>SafeGuide Incorporated</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Fast login to the app and keep your data safe</string>
 </dict>
 </plist>

@@ -26,6 +26,7 @@ class _MapViewState extends State<MapView> with WidgetsBindingObserver {
   List<Map<String, dynamic>> cards = [];
   List<Marker> _markers = [];
   bool _didInitializeMarkers = false;
+  final _cardSliderKey = GlobalKey<CardSliderState>();
 
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
@@ -138,6 +139,7 @@ class _MapViewState extends State<MapView> with WidgetsBindingObserver {
         icon: icon,
         onTap: () {
           _goToCardLocationByTap(cards[i]['latLng']);
+          onMarkerClicked(i);
         },
       );
       _markers.add(marker);
@@ -147,6 +149,11 @@ class _MapViewState extends State<MapView> with WidgetsBindingObserver {
     if (cards.isNotEmpty) {
       await _goToCardLocation(cards[0]['latLng']);
     }
+  }
+
+  void onMarkerClicked(int markerIndex) {
+    print('Marker clicked: $markerIndex');
+    _cardSliderKey.currentState!.switchToCard(markerIndex);
   }
 
   Future<void> _goToCardLocationByTap(LatLng latLng) async {
@@ -215,8 +222,10 @@ class _MapViewState extends State<MapView> with WidgetsBindingObserver {
             right: 0,
             child: SizedBox(
               height: 15.h,
-              child:
-                  CardSlider(cards: cards, goToCardLocation: _goToCardLocation),
+              child: CardSlider(
+                  cards: cards,
+                  goToCardLocation: _goToCardLocation,
+                  goToCardIndex: onMarkerClicked),
             ),
           ),
           Positioned(top: 15.h, right: 5.w, child: const EmergencyButton())

@@ -10,6 +10,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:sizer/sizer.dart';
+import 'package:local_auth/local_auth.dart';
 
 import 'package:safeguide/screens/home/home.dart';
 
@@ -79,16 +80,37 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
+  final LocalAuthentication _localAuth = LocalAuthentication();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (loggedUser != null) {
-        Navigator.pushReplacementNamed(context, '/home');
+        checkBiometricLogin();
       } else {
         Navigator.pushReplacementNamed(context, '/loginHome');
       }
     });
+  }
+
+  void checkBiometricLogin() async {
+    try {
+      final canAuthenticate = await _localAuth.canCheckBiometrics;
+      if (canAuthenticate) {
+        final didAuthenticate = await _localAuth.authenticate(
+            localizedReason: 'Please authenticate to enter the app');
+        if (didAuthenticate) {
+          Navigator.pushReplacementNamed(context, '/home');
+        } else {
+          Navigator.pushReplacementNamed(context, '/loginHome');
+        }
+      } else {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    } catch (e) {
+      Navigator.pushReplacementNamed(context, '/loginHome');
+    }
   }
 
   @override

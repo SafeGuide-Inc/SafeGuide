@@ -7,19 +7,41 @@ import 'package:sizer/sizer.dart';
 class CardSlider extends StatefulWidget {
   final List<Map<String, dynamic>> cards;
   final Function(LatLng) goToCardLocation;
+  final Function(int) goToCardIndex;
 
-  CardSlider({
-    required this.cards,
-    required this.goToCardLocation,
-  });
+  CardSlider(
+      {required this.cards,
+      required this.goToCardLocation,
+      required this.goToCardIndex});
 
   @override
-  _CardSliderState createState() => _CardSliderState();
+  CardSliderState createState() => CardSliderState();
 }
 
-class _CardSliderState extends State<CardSlider> {
+class CardSliderState extends State<CardSlider> {
   int currentIndex = 0;
   final PageController _pageController = PageController();
+
+  void switchToCard(int index) {
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.ease,
+    );
+    setState(() {
+      currentIndex = index;
+    });
+    LatLng latLng = widget.cards[currentIndex]['latLng'];
+    widget.goToCardLocation(latLng);
+    Marker marker = Marker(
+      markerId: MarkerId(latLng.toString()),
+      position: latLng,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+    );
+    setState(() {
+      widget.cards[currentIndex]['marker'] = marker;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
