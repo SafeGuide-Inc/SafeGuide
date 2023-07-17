@@ -28,6 +28,7 @@ export const typeDefs = `#graphql
   type Query {
     getUser(id: ID!): User
     getAllUsers: [User]
+    getDevice(userId: ID!): Device
   }
 
   type Mutation {
@@ -43,6 +44,12 @@ export const resolvers = {
     Query: {
         getUser: async (_parent: any, { id }: any) => {
             return prisma.user.findUnique({ where: { id } });
+        },
+        getDevice: async (_parent: any, { id }: any) => {
+            const devices = await prisma.device.findMany({ where: {
+                userId: id 
+            }});
+            return devices[0];
         },
         getAllUsers() {
             return prisma.user.findMany();
