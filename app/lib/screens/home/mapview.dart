@@ -122,12 +122,20 @@ class _MapViewState extends State<MapView> with WidgetsBindingObserver {
     }
 
     for (int i = 0; i < cards.length; i++) {
+      BitmapDescriptor icon;
+      if (cards[i]['schoolReport'] == true) {
+        icon =
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow);
+      } else {
+        icon = BitmapDescriptor.defaultMarkerWithHue(cards[i]['internalReport']
+            ? BitmapDescriptor.hueRed
+            : BitmapDescriptor.hueBlue);
+      }
+
       Marker marker = Marker(
         markerId: MarkerId(cards[i]['latLng'].toString()),
         position: cards[i]['latLng'],
-        icon: BitmapDescriptor.defaultMarkerWithHue((cards[i]['internalReport'])
-            ? BitmapDescriptor.hueRed
-            : BitmapDescriptor.hueBlue),
+        icon: icon,
         onTap: () {
           _goToCardLocationByTap(cards[i]['latLng']);
         },

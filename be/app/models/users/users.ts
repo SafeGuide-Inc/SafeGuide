@@ -17,12 +17,24 @@ export const typeDefs = `#graphql
     supabaseId: String
     updatedAt: DateTime
   }
+
+  type Device {
+    userId: String
+    deviceToken: String
+    os: String
+
+  }
+
   type Query {
     getUser(id: ID!): User
     getAllUsers: [User]
+    getDevice(userId: ID!): Device
   }
+
   type Mutation {
     createUser(firstName: String!, lastName: String!, email: String!, phoneNumber: String!, organizationId: String!, status: String!, supabaseId: String!): User!
+    deleteUser(id: ID!): User
+    addDevice(userId: ID!, deviceToken: String, os: String): Device
   }
 
 `;
@@ -32,6 +44,12 @@ export const resolvers = {
     Query: {
         getUser: async (_parent: any, { id }: any) => {
             return prisma.user.findUnique({ where: { id } });
+        },
+        getDevice: async (_parent: any, { id }: any) => {
+            const devices = await prisma.device.findMany({ where: {
+                userId: id 
+            }});
+            return devices[0];
         },
         getAllUsers() {
             return prisma.user.findMany();
@@ -62,6 +80,36 @@ export const resolvers = {
                     // Handle other errors
                     throw new Error('Something went wrong');
                 }
+            }
+        },
+        addDevice: async (_parent: any, { userId, os, deviceToken }: any) => {
+            try {
+                const newDevice = await prisma.device.create({
+                    data: {
+                        userId: userId,
+                        os: os,
+                        deviceToken: deviceToken,
+                    },
+                })
+                return newDevice
+            } catch (error: any) {
+                // Handle other errors
+                console.log(error)
+                throw new Error('Something went wrong');
+            }
+        },
+        deleteUser: async (_parent: any, { id }: any) => {
+            try {
+                const userDeleted = await prisma.user.delete({
+                    where: {
+                        id
+                    },
+                })
+                return userDeleted
+            } catch (error: any) {
+                console.log(error)
+                // Handle other errors
+                throw new Error('Something went wrong');
             }
         },
     },
